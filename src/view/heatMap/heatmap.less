@@ -1,0 +1,110 @@
+/**
+z-index 最顶层是99
+ */
+
+.demo-wrapper /deep/ svg {
+  position: absolute;
+}
+
+.demo-wrapper /deep/.brushsvg {
+  z-index: -1;
+}
+//mysvg是显示的链接矩阵
+.demo-wrapper /deep/ .mysvg {
+  font: 15px sans-serif;
+  z-index: 2000;
+}
+
+.demo-wrapper /deep/ .mysvg .background {
+  fill: #eee;
+}
+
+.demo-wrapper /deep/ .mysvg line {
+  stroke: #fff;
+}
+
+/*文本高亮的时候显示*/
+.demo-wrapper /deep/ .mysvg text.active {
+  fill: red;
+}
+//改变滑动条的样式
+.demo-wrapper /deep/ .el-slider__bar {
+  background-color: white;
+}
+
+.demo-wrapper /deep/ .el-slider__stop {
+  background-color: #303030;
+}
+
+
+//.demo-wrapper {
+//  position: relative;
+//}
+
+.tooltip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, .8);
+  color: #fff;
+  font-size: 14px;
+  padding: 5px;
+  line-height: 18px;
+  display: none;
+}
+
+.legend-area {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 10px;
+  border: solid white;
+  border-width: 1px 1px 0 1px;
+  background: #393939;
+  opacity: 0.8;
+  line-height: 1em;
+  width: 250px;
+  height: 55px;
+}
+
+#max {
+  float: right;
+}
+
+#min {
+  float: left;
+}
+
+#rangeS {
+  position: absolute;
+  top: 10px;
+  left: 100px;
+}
+
+span {
+  color: white;
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+}
+
+ h4 {
+  color: white;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-family: sans-serif;
+}
+
+.demo-wrapper /deep/ .el-dropdown {
+  color: #fff;
+}
+
+.block {
+  position: absolute;
+  right: 10px;
+  bottom: 0px;
+  width: 251px;
+  height: 40px;
+}

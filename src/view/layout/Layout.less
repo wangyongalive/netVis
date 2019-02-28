@@ -1,0 +1,80 @@
+@subWidth: 236px;
+@subHeight: 236px;
+
+/*子图查找的div*/
+#svg-wrap {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: @subWidth;
+  height: @subHeight;
+  z-index: 1000;
+  border: solid gray;
+  border-width: 0 0 1px 1px;
+}
+
+#svg-wrap /deep/ svg {
+  display: block;
+  margin: auto;
+}
+
+#layout /deep/ .edge {
+  stroke: #888;
+  opacity: 0.6;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  cursor: default;
+}
+
+#layout /deep/ .edge:hover, #layout /deep/ .dragLine {
+  stroke: #eee;
+  stroke-width: 3px;
+  opacity: 0.8;
+}
+
+#layout /deep/ .vertex {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+#layout /deep/ .vertex:hover {
+  opacity: 1;
+}
+
+#layout /deep/ .dragLine.hidden {
+  stroke-width: 0;
+}
+
+/*索套*/
+/*路径属性*/
+#layout /deep/ .lasso path {
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 2px;
+}
+
+/*圈区域的属性*/
+#layout /deep/ .lasso .drawn {
+  fill-opacity: 0.1;
+  fill: #ccc;
+}
+
+/*当接近起始点的时候的样式*/
+#layout /deep/ .lasso .loop_close {
+  fill: none;
+  stroke-dasharray: 4, 4;
+}
+
+/*起始原点*/
+#layout /deep/ .lasso .origin {
+  fill: #3399FF;
+  fill-opacity: .5;
+}
+
+#layout /deep/ .not_possible {
+  opacity: .3;
+}
+
+#layout /deep/ .possible {
+  opacity: .9;
+}

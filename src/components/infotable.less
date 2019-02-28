@@ -1,0 +1,71 @@
+@backgroundColor: #303030;
+
+.el-table th, .el-table tr {
+  background-color: @backgroundColor !important
+}
+
+.el-table__empty-block {
+  background-color: @backgroundColor !important
+}
+
+#info_table table tbody td:hover {
+  background-color: #C4C9CF;
+}
+
+#info_table table tbody tr:hover {
+  background-color: #737373;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+  background: rgba(80, 80, 80, 0.7)
+}
+
+.el-table tr.hover-row > td {
+  background-color: rgba(150, 150, 150, 0.9);
+}
+
+.el-table .cell {
+  text-align: center;
+  line-height: 16px;
+}
+
+.el-table td, .el-table th {
+  padding: 6px 0;
+}
+
+.el-table--scrollable-y .el-table__body-wrapper {
+  overflow-y: auto;
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #555;
+}
+
+.el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li {
+  margin: 0;
+}
+
+.el-input {
+  width: 170px;
+}
+
+.blockInfo > div {
+  display: inline-block;
+  width: 49%;
+}
+
+.blockInfo .blockR div {
+  padding: 2px 5px;
+}
+
+// 改变左边div的样式
+.blockInfo .blockL {
+  position: relative;
+  top: -4px;
+}
+
+//改变内联样式
+.el-input--mini .el-input__inner {
+  height: 28px !important;
+  line-height: 28px !important;
+}
+

@@ -1,0 +1,232 @@
+@backgroundColor: #303030;
+body {
+  background-color: @backgroundColor;
+}
+
+#info_table {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border: solid gray;
+  border-width: 1px 1px 0 0;
+  width: 80%;
+  height: 30%;
+  background-color: @backgroundColor;
+}
+
+#control {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: solid white;
+  border-width: 0;
+  width: 20%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: @backgroundColor;
+}
+
+#main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: solid gray;
+  border-width: 0 1px 0 0;
+  width: 80%;
+  height: 70%;
+  background-color: @backgroundColor;
+}
+
+.dg ul {
+  height: auto !important;
+}
+
+.close-button.close-bottom {
+  width: 100% !important;
+  position: static !important;
+}
+
+.dg.a {
+  float: none
+}
+
+.dg.main.a {
+  width: 100% !important;
+  height: auto;
+  margin-right: 0 !important;
+  overflow: hidden;
+}
+
+.save-row {
+  width: 100% !important;
+}
+
+.dg .c select {
+  margin-top: 3px;
+  width: auto !important;
+  color: black;
+}
+
+.gears {
+  width: 8% !important;
+  height: 60% !important;
+}
+
+.dg .c input[type=text] {
+  height: 21px;
+  margin-top: 3px;
+}
+
+.brush .extent {
+  fill-opacity: .3;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+
+.download-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: inline-block;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  font-size: 14px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  background-clip: padding-box;
+}
+
+.download-menu > li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #333;
+  white-space: nowrap;
+  text-decoration: none;
+  background: 0 0;
+}
+
+.download-menu > li > a:hover, .download-menu > li > a:focus {
+  text-decoration: none;
+  color: #262626;
+  background-color: #f5f5f5;
+}
+
+.graph-tooltip {
+  position: absolute;
+  transform: translate(-50%, 25px);
+  font-family: Sans-serif;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 3px;
+  color: #eee;
+  background: rgba(0, 0, 0, 0.65);
+  visibility: hidden; /* by default */
+}
+
+.grabbable {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.grabbable:active {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: black;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  background-color: black;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #F5F5F5;
+  min-height: 50px;
+}
+
+/*mask alert的样式*/
+div.v-dialog div.v-dialog-content {
+  background-color: @backgroundColor !important;
+  opacity: .7;
+}
+
+.v-dialog-alert .v-dialog-alert__content {
+  color: #f5f5f5;
+}
+
+div.v-dialog div.v-dialog-header h3 {
+  margin: auto 0;
+  color: #dee2ea;
+}
+
+/*element start*/
+.el-button-group {
+  position: absolute;
+  z-index: 99;
+  top: 2%;
+  left: 2%;
+}
+
+//Dropdown样式
+.el-dropdown {
+  color: #fff;
+}
+
+/*element end*/
+
+
+
+/*d3-tip start*/
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  z-index: 6000;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+/*d3-tip end*/
