@@ -28,20 +28,6 @@
           this.dataObj[item.id] = item
         })
       }
-
-
-      // 将数据放到全局变量中 减少一次请求
-      // this.GLOBAL.then((response) => {
-      //   this.characterData = response.data
-      //   this.info = response.data.info
-      //   this.init(this.characterData.nodes, this.info)
-      //   this.characterData.nodes.forEach((item) => {
-      //     this.dataObj[item.id] = item
-      //   })
-      // }).catch(function (error) {
-      //   console.log('获取数据出错: ' + error)
-      // })
-
     },
     data() {
       return {
