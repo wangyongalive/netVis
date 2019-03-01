@@ -130,6 +130,9 @@
             }
           ]
         })
+        myChart.on('click', function (params) {
+          console.log(params);
+        })
       }
     },
     beforeRouteLeave(to, from, next) {
