@@ -55,16 +55,6 @@
       ...mapState(['layout'])
     },
     methods: {
-      // async getData() {
-      //   await axios.get('/get/handledata').then((response) => {
-      //     this.characterData = response.data.nodes
-      //     this.info = response.data.info
-      //     this.init(this.characterData, this.info)
-      //   })
-      //     .catch(function (error) {
-      //       console.log('获取数据出错: ' + error)
-      //     })
-      // },
       init(character_data, info) {
 
         d3.select('#control')
@@ -296,7 +286,7 @@
         f5.add(options, '聚类系数').listen();
 
 
-        let change = gui.add(options, 'change', ['webgl', 'layout', 'heatmap'])
+        let change = gui.add(options, 'change', ['layered', 'layout', 'heatmap'])
         change.onFinishChange((value) => this.pushShow(value))
 
         // 分布
@@ -310,7 +300,7 @@
         d3.select("#control").selectAll("input").attr("readonly", "readonly").attr('disabled', 'true')
       },
       pushShow(layout) {
-        this.changeLayout(layout)
+        this.changeLayout(layout); // 改变store里面的值
         this.$router.push(`/${layout}`)
       },
       drawGraph(type) {
