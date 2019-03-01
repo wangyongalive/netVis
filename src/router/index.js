@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Layout from '@/view/layout/layout'
 import Webgl from '@/view/webgl/webgl'
 import Heatmap from '@/view/heatMap/heatmap'
+import  Layered from '@/view/layered/layered';
 
 Vue.use(Router)
 
@@ -30,6 +31,12 @@ export default new Router({
     {
       path: '/',
       redirect: '/webgl'
+    },
+    {
+      path: '/layered',
+      name: 'layered',
+      component: Layered,
+      meta: {keepAlive: true, title: 'layered'} // 页面的名称
     }
   ]
 })
