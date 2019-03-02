@@ -1,6 +1,6 @@
 <template>
   <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-  <div id="container" style="width: 1000px;height:600px;"></div>
+  <div id="container"></div>
 </template>
 
 <script>
@@ -144,5 +144,8 @@
 </script>
 
 <style scoped>
-
+ #container{
+   width: 100%;
+   height: 100%;
+ }
 </style>
