@@ -26,6 +26,10 @@ export default new Router({
       name: 'layered',
       component: Layered,
       meta: {keepAlive: true, title: 'layered'} // 页面的名称
+    },
+    {
+      path:'/',
+      redirect:'/layered'
     }
   ]
 })
