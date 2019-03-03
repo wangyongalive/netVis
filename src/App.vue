@@ -45,6 +45,7 @@
     created() {
       api.getData().then((res) => {
         // 更新vuex
+
         this.$store.dispatch('getnodesLinks', res.data);
       })
     }
