@@ -26,7 +26,7 @@
       }
     },
     mounted() {
-      // this.init();
+      this.init();
     },
     methods: {
       init() {
@@ -94,12 +94,30 @@
         })
 
 
+        //添加一个提示框
+        let tooltip = d3.select("#WebGL-output")
+          .append("div")
+          .attr("class", "tooltip")
+          .style("opacity", 0.0);
+
+
         const dragControls = new DragControls(dragObjects, self.camera, self.renderer.domElement);
         dragControls.addEventListener('hoveron', function (event) {
-          self.scene.getChildByName(`level_${event.object.position.z}`).visible = true;
+          self.scene.getObjectByName(`level_${event.object.position.z}`).visible = true;
+          let res = ''
+          res += `<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${colour(event.object.data.level)};"></span><br>`
+          for (let i in event.object.data) {
+            if (['id', 'level'].includes(i))
+              res += `-  ${i} : ${event.object.data[i]}<br>`;
+          }
+          tooltip.html(res)
+            .style("left", window.event.offsetX + "px")
+            .style("top", window.event.offsetY + 20 + "px")
+            .style("opacity", 1.0);
         });
         dragControls.addEventListener('hoveroff', function (event) {
-          self.scene.getChildByName(`level_${event.object.position.z}`).visible = false;
+          self.scene.getObjectByName(`level_${event.object.position.z}`).visible = false;
+          tooltip.style("opacity", 0.0);
         });
 
 
@@ -123,4 +141,29 @@
     height: 100%;
   }
 
+  div /deep/ .tooltip {
+    position: absolute;
+    width: 120px;
+    height: auto;
+    text-align: center;
+    font-family: simsun;
+    font-size: 14px;
+    color: white;
+    background-color: black;
+    border-width: 2px solid black;
+    border-radius: 5px;
+  }
+
+  div /deep/ .tooltip:after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 20%;
+    margin-left: -8px;
+    width: 0;
+    height: 0;
+    border-bottom: 12px solid #000000;
+    border-right: 12px solid transparent;
+    border-left: 12px solid transparent;
+  }
 </style>
