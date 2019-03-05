@@ -57,15 +57,19 @@
         controls.dynamicDampingFactor = 0.3;
 
         let dragObjects = [];
+        let nodeLevels = new Set();
+        // 节点
         data.forEach(node => {
           node.geometry = new THREE.SphereGeometry(1, 5, 5);
-          node.material = new THREE.MeshBasicMaterial({color: colour(node.level)})
-          node.circle = new THREE.Mesh(node.geometry, node.material)
+          node.material = new THREE.MeshBasicMaterial({color: colour(node.level)});
+          node.circle = new THREE.Mesh(node.geometry, node.material);
+          node.circle.data = node; // 数据绑定
           self.scene.add(node.circle)
           dragObjects.push(node.circle);
-          node.circle.position.set(node.x / 10, node.y / 10, node.level * 10)
+          node.circle.position.set(node.x / 10, node.y / 10, node.level * 10);
+          nodeLevels.add(node.level);
         })
-
+        // 边
         link.forEach((link) => {
           link.material = new THREE.LineBasicMaterial({color: 0xAAAAAA})
           link.geometry = new THREE.Geometry()
@@ -76,32 +80,26 @@
           self.scene.add(link.line)
         })
 
+        Array.from(nodeLevels).forEach((level) => {
+          let planeGeometry = new THREE.PlaneGeometry(90, 90, 10, 10);
+          let planeMaterial = new THREE.MeshBasicMaterial({color: colour(level)});
+          let plane = new THREE.Mesh(planeGeometry, planeMaterial);
+          plane.position.x = 45;
+          plane.position.y = 45;
+          plane.position.z = level * 10;
+          plane.visible = false;
+          plane.data = level;
+          plane.name = `level_${plane.position.z}`;
+          this.scene.add(plane);
+        })
 
-        // let onDrag = false;
+
         const dragControls = new DragControls(dragObjects, self.camera, self.renderer.domElement);
         dragControls.addEventListener('hoveron', function (event) {
-          console.log('222');
-          // controls.enabled = false;
+          self.scene.getChildByName(`level_${event.object.position.z}`).visible = true;
         });
         dragControls.addEventListener('hoveroff', function (event) {
-          console.log('222');
-          // controls.enabled = true;
-        });
-        dragControls.addEventListener('dragstart', function (event) {
-          console.log('222');
-          // event.object.data.pbody.type = CANNON.Body.KINEMATIC;
-          // event.object.data.pbody.updateMassProperties();
-          // onDrag = true;
-        });
-        dragControls.addEventListener('drag', function (event) {
-          console.log('222');
-          // event.object.data.pbody.position.copy(event.object.position);
-        });
-        dragControls.addEventListener('dragend', function (event) {
-          console.log('222');
-          // event.object.data.pbody.type = CANNON.Body.DYNAMIC;
-          // event.object.data.pbody.updateMassProperties();
-          // onDrag = false;
+          self.scene.getChildByName(`level_${event.object.position.z}`).visible = false;
         });
 
 
@@ -111,7 +109,6 @@
           controls.update();
           self.renderer.render(self.scene, self.camera);
         }
-
         document.getElementById("WebGL-output").appendChild(self.renderer.domElement);
       }
 
