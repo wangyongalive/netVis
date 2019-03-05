@@ -80,11 +80,5 @@
 </script>
 
 <style scoped lang="less">
-  #subHeatmap {
-    position: absolute !important;
-    right: 0;
-    bottom: 0;
-    z-index: 1000;
-    border: solid gray;
-  }
+  @import "subgraphHeatMap.less";
 </style>
