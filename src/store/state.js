@@ -1,5 +1,5 @@
 // 防止用户浏览器异常问题
-let defaultLayout = 'layered'
+let defaultLayout = 'webglLayered'
 try {
   if (localStorage.layout) {
     defaultLayout = localStorage.layout

@@ -286,7 +286,7 @@
         f5.add(options, '聚类系数').listen();
 
 
-        let change = gui.add(options, 'change', ['layered', 'layout', 'heatmap'])
+        let change = gui.add(options, 'change', ['webglLayered', 'layout', 'heatmap'])
         change.onFinishChange((value) => this.pushShow(value))
 
         // 分布

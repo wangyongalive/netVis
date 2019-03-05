@@ -1,12 +1,18 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Layout from '@/view/layout/layout'
-// import Webgl from '@/view/webgl/webgl'
-import Heatmap from '@/view/heatMap/heatmap'
-// import  Layered from '@/view/layered/layered';
-import  webglLayered from '@/view/webglLayered/webglLayered';
+import Vue from 'vue';
+import Router from 'vue-router';
+import Layout from '@/view/layout/layout';
+import Heatmap from '@/view/heatMap/heatmap';
+import webglLayered from '@/view/webglLayered/webglLayered';
+import {mapState} from 'vuex';
 
 Vue.use(Router)
+let redirectPath = 'webglLayered';
+try {
+  if (localStorage.layout) {
+    redirectPath = localStorage.layout
+  }
+} catch (e) {
+}
 
 export default new Router({
   routes: [
@@ -22,25 +28,15 @@ export default new Router({
       component: Heatmap,
       meta: {keepAlive: true, title: 'heatmap'} // 页面的名称
     },
-    // {
-    //   path: '/layered',
-    //   name: 'layered',
-    //   component: Layered,
-    //   meta: {keepAlive: true, title: 'layered'} // 页面的名称
-    // },
-    // {
-    //   path:'/',
-    //   redirect:'/layered'
-    // },
     {
-      path: '/webgllayered',
+      path: '/webglLayered',
       name: 'webglLayered',
       component: webglLayered,
       meta: {keepAlive: true, title: 'webglLayered'} // 页面的名称
     },
     {
-      path:'/',
-      redirect:'/webgllayered'
+      path: '/',
+      redirect: redirectPath
     }
   ]
 })
