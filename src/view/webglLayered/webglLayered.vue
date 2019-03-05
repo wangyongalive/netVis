@@ -105,10 +105,10 @@
         dragControls.addEventListener('hoveron', function (event) {
           self.scene.getObjectByName(`level_${event.object.position.z}`).visible = true;
           let res = ''
-          res += `<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${colour(event.object.data.level)};"></span><br>`
+          res += `<span style="display:inline-block;margin-left:55px;border-radius:10px;width:10px;height:10px;background-color:${colour(event.object.data.level)};"></span><br>`
           for (let i in event.object.data) {
-            if (['id', 'level'].includes(i))
-              res += `-  ${i} : ${event.object.data[i]}<br>`;
+            if (['id', 'level','degree'].includes(i))
+              res += `-  ${i} : ${event.object.data[i]}<br/>`;
           }
           tooltip.html(res)
             .style("left", window.event.offsetX + "px")
@@ -145,12 +145,11 @@
     position: absolute;
     width: 120px;
     height: auto;
-    text-align: center;
     font-family: simsun;
     font-size: 14px;
     color: white;
     background-color: black;
-    border-width: 2px solid black;
+    border: 2px solid black;
     border-radius: 5px;
   }
 
