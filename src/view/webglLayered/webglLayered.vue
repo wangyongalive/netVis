@@ -26,7 +26,7 @@
       }
     },
     mounted() {
-      this.init();
+      // this.init();
     },
     methods: {
       init() {
@@ -109,6 +109,7 @@
           controls.update();
           self.renderer.render(self.scene, self.camera);
         }
+
         document.getElementById("WebGL-output").appendChild(self.renderer.domElement);
       }
 
@@ -116,9 +117,10 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="less">
   #WebGL-output {
     width: 100%;
     height: 100%;
   }
+
 </style>

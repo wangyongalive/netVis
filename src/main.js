@@ -6,16 +6,14 @@ import App from './App'
 import router from './router'
 import store from './store'
 import vDialog from 'v-dialogs';
-
-import 'normalize.css'
-import 'element-ui/lib/theme-chalk/index.css'
-import './assets/iconfont.css'
+import 'normalize.css';
+import 'element-ui/lib/theme-chalk/index.css';
+import './assets/iconfont.css';
 
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(vDialog);
-
 
 
 /* eslint-disable no-new */
