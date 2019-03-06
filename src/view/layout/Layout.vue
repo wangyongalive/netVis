@@ -106,7 +106,7 @@
     </el-button-group>
     <div id="svg-wrap"></div>
     <!--异步获取数据，直接获取数据为空-->
-    <subgraph-heatmap :width="236|toPx" :height="236|toPx" :datas="subMapData"
+    <subgraph-heatmap :width="250|toPx" :height="250|toPx" :datas="subMapData"
                       v-if="subMapData.length"
     ></subgraph-heatmap>
   </div>

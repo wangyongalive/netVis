@@ -2,62 +2,62 @@
   <div style="height: 100%; width: 100%;">
     <div class="demo-wrapper" style="height: 100%; width: 90%;" ref="wrapper">
       <div id="heatmap" style="height: 100%; width: 100%;">
-        <canvas class="heatmap-canvas" width="1209" height="662" style="position: absolute; left: 0px; top: 0px;"></canvas>
-        <el-button-group>
-          <el-button type="info"
-                     @click="removeSvg"
-                     class="iconfont icon-remove "
-                     size="small"
-                     title="移除"
-          >
+        <!--<canvas class="heatmap-canvas" width="1209" height="662" style="position: absolute; left: 0px; top: 0px;"></canvas>-->
+        <!--<el-button-group>-->
+          <!--<el-button type="info"-->
+                     <!--@click="removeSvg"-->
+                     <!--class="iconfont icon-remove "-->
+                     <!--size="small"-->
+                     <!--title="移除"-->
+          <!--&gt;-->
 
-          </el-button>
-          <el-button type="info"
-                     @click="getForm"
-                     class="iconfont icon-tool-DataMatrix"
-                     size="small"
-                     title="邻接矩阵"
-          >
-          </el-button>
-          <el-button type="info"
-                     size="small"
-                     title="显示节点/边"
-          >
-            <el-dropdown size="mini"
-                         @command="showNodeLink"
-                         placement="bottom-start"
-            >
-              <span class="iconfont icon-relitu"></span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="显示节点">显示节点</el-dropdown-item>
-                <el-dropdown-item command="隐藏节点" divided>隐藏节点</el-dropdown-item>
-                <el-dropdown-item command="显示边" divided>显示边</el-dropdown-item>
-                <el-dropdown-item command="隐藏边" divided>隐藏边</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-button>
-          <el-button type="info"
-                     @click="openBrush"
-                     class="iconfont icon-formatbrush"
-                     size="small"
-                     title="刷子"
-          >
-          </el-button>
-        </el-button-group>
+          <!--</el-button>-->
+          <!--<el-button type="info"-->
+                     <!--@click="getForm"-->
+                     <!--class="iconfont icon-tool-DataMatrix"-->
+                     <!--size="small"-->
+                     <!--title="邻接矩阵"-->
+          <!--&gt;-->
+          <!--</el-button>-->
+          <!--<el-button type="info"-->
+                     <!--size="small"-->
+                     <!--title="显示节点/边"-->
+          <!--&gt;-->
+            <!--<el-dropdown size="mini"-->
+                         <!--@command="showNodeLink"-->
+                         <!--placement="bottom-start"-->
+            <!--&gt;-->
+              <!--<span class="iconfont icon-relitu"></span>-->
+              <!--<el-dropdown-menu slot="dropdown">-->
+                <!--<el-dropdown-item command="显示节点">显示节点</el-dropdown-item>-->
+                <!--<el-dropdown-item command="隐藏节点" divided>隐藏节点</el-dropdown-item>-->
+                <!--<el-dropdown-item command="显示边" divided>显示边</el-dropdown-item>-->
+                <!--<el-dropdown-item command="隐藏边" divided>隐藏边</el-dropdown-item>-->
+              <!--</el-dropdown-menu>-->
+            <!--</el-dropdown>-->
+          <!--</el-button>-->
+          <!--<el-button type="info"-->
+                     <!--@click="openBrush"-->
+                     <!--class="iconfont icon-formatbrush"-->
+                     <!--size="small"-->
+                     <!--title="刷子"-->
+          <!--&gt;-->
+          <!--</el-button>-->
+        <!--</el-button-group>-->
       </div>
     </div>
-    <div class="block">
-      <el-slider
-        v-model="value9"
-        range
-        show-stops
-        :max="88"
-        @change="changeValue"
-      >
-      </el-slider>
-    </div>
+    <!--<div class="block">-->
+      <!--<el-slider-->
+        <!--v-model="value9"-->
+        <!--range-->
+        <!--show-stops-->
+        <!--:max="88"-->
+        <!--@change="changeValue"-->
+      <!--&gt;-->
+      <!--</el-slider>-->
+    <!--</div>-->
     <div class="legend-area">
-      <h4>热力图图例</h4>
+      <!--<h4>热力图图例</h4>-->
       <span id="rangeS" ref="rangeS">范围:</span>
       <span id="min"></span>
       <span id="max"></span>
@@ -506,8 +506,8 @@
         }
       },
       showNodeLink(command) {
-        let nodeCanvas = document.getElementsByClassName('heatmap-canvas')[0]
-        let nodeCtx = nodeCanvas.getContext('2d')
+        let nodeCanvas = document.getElementsByClassName('heatmap-canvas')[0];
+        let nodeCtx = nodeCanvas.getContext('2d');
         switch (command) {
           case '显示节点':
             this.points.forEach((item) => {

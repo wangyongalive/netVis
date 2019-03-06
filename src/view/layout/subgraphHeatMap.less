@@ -3,5 +3,59 @@
   right: 0;
   bottom: 0;
   z-index: 1000;
-  border: 1px solid gray;
+  border-width: 1px 0px 0px 1px;
+  border-style: solid;
+  border-color: gray;
+}
+
+.container {
+  position: absolute !important;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  border-width: 1px 0px 0px 1px;
+  border-style: solid;
+  border-color: gray;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 1001;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, .8);
+  color: #fff;
+  font-size: 14px;
+  padding: 5px;
+  line-height: 18px;
+  display: none;
+}
+
+/*图例开始*/
+.legend-area {
+  position: absolute;
+  bottom: 251px;
+  right: 0;
+  padding: 0px;
+  border: solid gray;
+  border-width: 1px 0 0 1px;
+  background: #303030;
+  line-height: 1em;
+  width: 250px;
+  height: 35px;
+}
+
+#max {
+  float: right;
+}
+
+#min {
+  float: left;
+}
+
+span {
+  color: white;
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
 }
