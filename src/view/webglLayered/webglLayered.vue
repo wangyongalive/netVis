@@ -47,7 +47,8 @@
         // var axes = new THREE.AxisHelper(200);               //创建三轴表示
         // this.scene.add(axes);
 
-        let controls = new TrackballControls(this.camera);
+        // 要指定document 不然会将其应用到整个body
+        let controls = new TrackballControls(this.camera,this.$refs.WebGL);
         controls.rotateSpeed = 2.5;
         controls.zoomSpeed = 1.2;
         controls.panSpeed = 0.8;
@@ -60,7 +61,7 @@
         let nodeLevels = new Set();
         // 节点
         data.forEach(node => {
-          node.geometry = new THREE.SphereGeometry(1, 10, 10);
+          node.geometry = new THREE.SphereGeometry(1, 5, 5);
           node.material = new THREE.MeshBasicMaterial({color: colour(node.level)});
           node.circle = new THREE.Mesh(node.geometry, node.material);
           node.circle.data = node; // 数据绑定
@@ -107,7 +108,7 @@
           let res = ''
           res += `<span style="display:inline-block;margin-left:55px;border-radius:10px;width:10px;height:10px;background-color:${colour(event.object.data.level)};"></span><br>`
           for (let i in event.object.data) {
-            if (['id', 'level','degree'].includes(i))
+            if (['id', 'level', 'degree'].includes(i))
               res += `-  ${i} : ${event.object.data[i]}<br/>`;
           }
           tooltip.html(res)
