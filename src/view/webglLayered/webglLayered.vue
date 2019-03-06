@@ -60,7 +60,7 @@
         let nodeLevels = new Set();
         // 节点
         data.forEach(node => {
-          node.geometry = new THREE.SphereGeometry(1, 5, 5);
+          node.geometry = new THREE.SphereGeometry(1, 10, 10);
           node.material = new THREE.MeshBasicMaterial({color: colour(node.level)});
           node.circle = new THREE.Mesh(node.geometry, node.material);
           node.circle.data = node; // 数据绑定
@@ -136,33 +136,5 @@
 </script>
 
 <style scoped lang="less">
-  #WebGL-output {
-    width: 100%;
-    height: 100%;
-  }
-
-  div /deep/ .tooltip {
-    position: absolute;
-    width: 120px;
-    height: auto;
-    font-family: simsun;
-    font-size: 14px;
-    color: white;
-    background-color: black;
-    border: 2px solid black;
-    border-radius: 5px;
-  }
-
-  div /deep/ .tooltip:after {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 20%;
-    margin-left: -8px;
-    width: 0;
-    height: 0;
-    border-bottom: 12px solid #000000;
-    border-right: 12px solid transparent;
-    border-left: 12px solid transparent;
-  }
+  @import "webglLayered.less";
 </style>
