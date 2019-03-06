@@ -10,7 +10,8 @@
   export default {
     name: "subgraphHeatmap",
     mounted() {
-      this.drawHeatMap()
+      this.drawHeatMap();
+      this.drawNode(10,10,10);
     },
     data() {
       return {
@@ -74,7 +75,14 @@
           data: points
         };
         heatmapInstance.setData(data);
-      }
+      },
+      drawNode(x, y, radius) {
+        let nodeCanvas = document.getElementsByClassName('heatmap-canvas')[0]
+        let nodeCtx = nodeCanvas.getContext('2d');
+        nodeCtx.beginPath();
+        nodeCtx.arc(x, y, radius, 0, 2 * Math.PI);
+        nodeCtx.stroke();
+      },
     }
   }
 </script>
