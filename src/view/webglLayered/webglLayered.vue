@@ -61,7 +61,7 @@
         let nodeLevels = new Set();
         // 节点
         data.forEach(node => {
-          node.geometry = new THREE.SphereGeometry(1, 5, 5);
+          node.geometry = new THREE.SphereGeometry(1, 10, 10);
           node.material = new THREE.MeshBasicMaterial({color: colour(node.level)});
           node.circle = new THREE.Mesh(node.geometry, node.material);
           node.circle.data = node; // 数据绑定
