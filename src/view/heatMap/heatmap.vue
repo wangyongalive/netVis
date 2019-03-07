@@ -67,7 +67,6 @@
   </div>
 
 </template>
-
 <script>
   import PubSub from 'pubsub-js'
   import Heatmap from 'heatmap.js'

@@ -127,8 +127,12 @@
           data: this.points
         };
         this.heatmapInstance.setData(data);
+
       },
       showtoolTip() {
+        let self = this;
+        let height = self.$refs.wrapper.offsetHeight/2;
+        let width = self.$refs.wrapper.offsetWidth/2;
         /* 提示框开始*/
         let demoWrapper = document.querySelector('.demo-wrapper');
         let tooltip = document.querySelector('.tooltip');
@@ -152,6 +156,18 @@
         demoWrapper.onmouseout = function () {
           tooltip.style.display = 'none'
         }
+        demoWrapper.onclick = function (ev) {
+          let currentX = ev.offsetX;
+          let currentY = ev.offsetY;
+          console.log(currentX);
+          console.log(currentY);
+          let positionX = ((currentX - width) / width) * 600;
+          let positionY = ((currentY - height) / height) * 325;
+          console.log(positionX);
+          console.log(positionY);
+          d3.select('.g_cirLink').attr('transform',`translate(${positionX},${positionY})`);
+          console.log(document.getElementsByClassName('g_cirLink')[0]);
+        };
         /* 提示框结束*/
       },
       drawNode(x, y, radius) {

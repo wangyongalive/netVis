@@ -1,5 +1,5 @@
 <template>
-  <div id="layout" style="height: 100%; width: 100%;">
+  <div id="layout" style="height: 100%; width: 100%;" refs="layout">
     <el-button-group>
       <el-button type="info"
                  size="small"
@@ -179,8 +179,13 @@
       renderChart() { // 绘制力导向图
 
         let self = this
-        const width = 1200,
-          height = 650
+        // const width = 1200,
+        //   height = 650
+        console.log(self.$refs.layout);
+        console.log(document.getElementById('layout').style);
+        const width = self.$refs.layout.offsetWidth,
+          height = self.$refs.layout.offsetHeight;
+
         let resultLasso // 索套
 
         let force = d3.layout.force()
@@ -373,7 +378,7 @@
           }
 
           if (force.alpha() <= 0.01) {
-            self.subMapData  = self.nodes
+            self.subMapData = self.nodes
           }
 
           // force.stop(); // 渲染完成后立即停止刷新
