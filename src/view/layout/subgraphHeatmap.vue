@@ -133,8 +133,6 @@
         let self = this;
         let height = self.$refs.wrapper.offsetHeight / 2;
         let width = self.$refs.wrapper.offsetWidth / 2;
-        const Mwidth = document.getElementById('main').offsetWidth / 2,
-          Mheight = document.getElementById('main').offsetHeight / 2;
         /* 提示框开始*/
         let demoWrapper = document.querySelector('.demo-wrapper');
         let tooltip = document.querySelector('.tooltip');
@@ -161,14 +159,19 @@
         demoWrapper.onclick = function (ev) {
           let currentX = ev.offsetX;
           let currentY = ev.offsetY;
-          console.log(currentX);
-          console.log(currentY);
-          let positionX = ((currentX - width) / width) * Mwidth;
-          let positionY = ((currentY - height) / height) * Mheight;
-          console.log(positionX);
-          console.log(positionY);
-          d3.select('.g_cirLink').attr('transform', `translate(${-positionX},${-positionY})`);
-          console.log(document.getElementsByClassName('g_cirLink')[0]);
+          let currentGWidth = document.getElementsByClassName('g_cirLink')[0].getBoundingClientRect().width / 2;
+          let currentGHeight = document.getElementsByClassName('g_cirLink')[0].getBoundingClientRect().height / 2;
+          let positionX = ((currentX - width) / width) * currentGWidth;
+          let positionY = ((currentY - height) / height) * currentGHeight;
+          if (self.$store.state.translate) {
+            self.$store.dispatch('changeScaleTrans', {
+              scale: self.$store.state.scale,
+              translate: [-positionX, -positionY]
+            })
+            d3.select('.g_cirLink').attr("transform", `translate(${self.$store.state.translate})scale(${self.$store.state.scale})`);
+          } else {
+            d3.select('.g_cirLink').attr("transform", `translate(${-positionX},${-positionY})`);
+          }
         };
         /* 提示框结束*/
       },
@@ -176,7 +179,8 @@
         this.Ctx.beginPath();
         this.Ctx.arc(x, y, radius, 0, 2 * Math.PI);
         this.Ctx.stroke();
-      },
+      }
+      ,
       redraw(x, y, radius) {
         this.Ctx.clearRect(0, 0, parseInt(this.width), parseInt(this.height));
         let data = {

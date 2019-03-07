@@ -4,10 +4,13 @@ try {
   if (localStorage.layout) {
     defaultLayout = localStorage.layout
   }
-} catch (e) {}
+} catch (e) {
+}
 
 
 export default {
   layout: defaultLayout,
-  nodesLinks:{}
+  nodesLinks: {},
+  scale: '',
+  translate: ''
 }

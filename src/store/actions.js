@@ -5,5 +5,8 @@ export default {
   },
   getnodesLinks(ctx, nodesLinks) {
     ctx.commit('getnodesLinks', nodesLinks)
+  },
+  changeScaleTrans(ctx,obj){
+    ctx.commit('changeScaleTrans',obj)
   }
 }

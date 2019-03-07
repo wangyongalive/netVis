@@ -183,7 +183,7 @@
         const width = document.getElementById('main').offsetWidth,
           height = document.getElementById('main').offsetHeight;
 
-        let resultLasso // 索套
+        let resultLasso; // 索套
 
         let force = d3.layout.force()
           .nodes(this.nodes)	//设定顶点数组
@@ -222,7 +222,29 @@
           .call(zoom);
 
         function zoomed() {
-          svg_g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+          // d3当中平移和缩放操作是放在一起的
+          // 当按下ctrl按键时候 就使用d3.event
+          // 要平移就要使用ctrl按键
+          if (d3.event.sourceEvent.ctrlKey) {
+            svg_g.attr("transform", `translate(${d3.event.translate})scale(${d3.event.scale})`);
+            self.$store.dispatch('changeScaleTrans', {
+              scale: d3.event.scale,
+              translate: d3.event.translate
+            })
+            return;
+          }
+          let translate;
+          // 如果vuex中已经存在了translate 则使用vue中的translate
+          if (self.$store.state.translate) {
+            translate = self.$store.state.translate
+          } else {
+            translate = d3.event.translate
+          }
+          self.$store.dispatch('changeScaleTrans', {
+            scale: d3.event.scale,
+            translate: translate
+          })
+          svg_g.attr("transform", `translate(${self.$store.state.translate})scale(${self.$store.state.scale})`);
         }
 
         // 把所有的圆和线都放到一个g元素中
@@ -370,8 +392,8 @@
           // 标签的坐标
           // 标签坐标默认不参与计算 来加快速度
           // if (this.showLable) {
-            lables.attr('x', d => d.x)
-            lables.attr('y', d => d.y)
+          lables.attr('x', d => d.x)
+          lables.attr('y', d => d.y)
           // }
 
           if (force.alpha() <= 0.01) {

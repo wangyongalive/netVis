@@ -14,5 +14,9 @@ export default {
       localStorage.nodesLinks = JSON.stringify(nodesLinks)
     } catch (e) {
     }
+  },
+  changeScaleTrans(state, obj) {
+    state.scale = obj.scale;
+    state.translate = obj.translate;
   }
 }
