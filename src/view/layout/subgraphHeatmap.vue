@@ -131,14 +131,16 @@
       },
       showtoolTip() {
         let self = this;
-        let height = self.$refs.wrapper.offsetHeight/2;
-        let width = self.$refs.wrapper.offsetWidth/2;
+        let height = self.$refs.wrapper.offsetHeight / 2;
+        let width = self.$refs.wrapper.offsetWidth / 2;
+        const Mwidth = document.getElementById('main').offsetWidth / 2,
+          Mheight = document.getElementById('main').offsetHeight / 2;
         /* 提示框开始*/
         let demoWrapper = document.querySelector('.demo-wrapper');
         let tooltip = document.querySelector('.tooltip');
 
         function updateTooltip(x, y, value) {
-          let transl = 'translate(' + (x + 15) + 'px, ' + (y + 15) + 'px)';
+          let transl = `translate(${x + 15}px,${y + 15}px)`;
           tooltip.style.webkitTransform = transl
           tooltip.innerHTML = value
         }
@@ -161,11 +163,11 @@
           let currentY = ev.offsetY;
           console.log(currentX);
           console.log(currentY);
-          let positionX = ((currentX - width) / width) * 600;
-          let positionY = ((currentY - height) / height) * 325;
+          let positionX = ((currentX - width) / width) * Mwidth;
+          let positionY = ((currentY - height) / height) * Mheight;
           console.log(positionX);
           console.log(positionY);
-          d3.select('.g_cirLink').attr('transform',`translate(${positionX},${positionY})`);
+          d3.select('.g_cirLink').attr('transform', `translate(${-positionX},${-positionY})`);
           console.log(document.getElementsByClassName('g_cirLink')[0]);
         };
         /* 提示框结束*/

@@ -139,7 +139,6 @@
         shortPathList: '',
         subGraph: [],
         subIndex: 0,
-        showLable: false,
         isNer: false,
         curNodeId: '',
         curLinkId: '',
@@ -180,11 +179,9 @@
 
         let self = this
         // const width = 1200,
-        //   height = 650
-        console.log(self.$refs.layout);
-        console.log(document.getElementById('layout').style);
-        const width = self.$refs.layout.offsetWidth,
-          height = self.$refs.layout.offsetHeight;
+        //   height = document.getElementById('main').offsetHeight
+        const width = document.getElementById('main').offsetWidth,
+          height = document.getElementById('main').offsetHeight;
 
         let resultLasso // 索套
 
@@ -196,7 +193,7 @@
           .charge(-25)	//设定顶点的电荷数
           .start();	//开启布局计算
 
-        this.obj.force = force
+        this.obj.force = force;
 
         if (d3.select('.mainsvg')) { // 如果已经有了画布 先移除
           d3.select('.mainsvg').remove()
@@ -372,10 +369,10 @@
 
           // 标签的坐标
           // 标签坐标默认不参与计算 来加快速度
-          if (this.showLable) {
+          // if (this.showLable) {
             lables.attr('x', d => d.x)
             lables.attr('y', d => d.y)
-          }
+          // }
 
           if (force.alpha() <= 0.01) {
             self.subMapData = self.nodes
@@ -390,7 +387,6 @@
         this.obj.lines = lines
         this.obj.circles = circles
         this.obj.lables = lables
-
 
         // 索套
         // Lasso
@@ -688,15 +684,6 @@
                     .attr('stroke-width', 8)
                     .attr('stroke-opacity', 1)
                 })
-
-
-                // let point = {
-                //   x: Math.floor(Math.random() * this.subWidth),
-                //   y: Math.floor(Math.random() * this.subHeight),
-                //   value: val,
-                //   // radius configuration on point basis
-                //   radius: radius
-                // }
               })
             break
           case'下一个子图':
@@ -928,10 +915,7 @@
         }
       },
       setLabelShow(value) {
-        this.showLable = value;
         this.obj.lables
-          .attr('x', d => d.x)
-          .attr('y', d => d.y)
           .attr("visibility", () => value ? 'visible' : 'hidden')
       },
       setLabelSize(value) {
