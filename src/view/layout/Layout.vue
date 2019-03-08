@@ -135,7 +135,8 @@
         degree: [],
         lays: 0,
         lay: 0, // 默认从第0层开始
-        neribor: [],
+        neribor: {},
+        neiborFlag: false,
         shortPathList: '',
         subGraph: [],
         subIndex: 0,
@@ -144,7 +145,8 @@
         curLinkId: '',
         dataObj: {},
         dataObjLink: {},
-        subMapData: []
+        subMapData: [],
+        zoom: null,
         // allNodes: [],
         // allLinks: []
       }
@@ -178,8 +180,6 @@
       renderChart() { // 绘制力导向图
 
         let self = this
-        // const width = 1200,
-        //   height = document.getElementById('main').offsetHeight
         const width = document.getElementById('main').offsetWidth,
           height = document.getElementById('main').offsetHeight;
 
@@ -210,7 +210,7 @@
 
 
         let color = d3.scale.category20c()
-        let zoom = d3.behavior.zoom()
+        self.zoom = d3.behavior.zoom()
           .scaleExtent([0, 10])
           .on("zoom", zoomed);
 
@@ -219,30 +219,16 @@
           .attr("width", width)
           .attr("height", height)
           .style("opacity", 0)
-          .call(zoom);
+          .call(self.zoom);
 
         function zoomed() {
-          let translate;
-          // 如果vuex中已经存在了translate 则使用vue中的translate
-          if (self.$store.state.translate) {
-            translate = self.$store.state.translate
-          } else {
-            translate = d3.event.translate
-          }
-          self.$store.dispatch('changeScaleTrans', {
-            scale: d3.event.scale,
-            translate: translate
-          })
-          let x1 = d3.event.translate[0] + self.$store.state.translate[0];
-          let y1 = d3.event.translate[1] + self.$store.state.translate[1];
-          svg_g.attr("transform", `translate(${x1},${y1})scale(${d3.event.scale})`);
+          svg_g.attr("transform", `translate(${d3.event.translate})scale(${d3.event.scale})`);
         }
 
         // 把所有的圆和线都放到一个g元素中
         let svg_g = d3.select('svg')
           .append('g')
           .attr("class", "g_cirLink")
-
 
         let lines = svg_g.selectAll(".forceLine")
           .data(this.links)
@@ -254,17 +240,43 @@
           .attr("stroke", d => d.color)
           .attr("stroke-opacity", d => d.opacity)
           .on('click', d => {
-            this.selectOneLink(d.id);
+            refleshLink(self.curLinkId);
             (this.$parent.$children)[0].updateLink(d);
+            // 更新control选中的边
+            self.linkHight(d3.select(document.getElementById(d.id)));
             this.curLinkId = d.id
           })
-          .on('mouseover', function () {
-            d3.select(this).attr("stroke-width", d => d.weight * 2);
+          .on('mouseover', function (d) {
+            d3.select(this)
+              .attr("stroke-width", d => d.weight * 2)
+              .attr("stroke", "#b46fff");
+            d3.select("#node_" + d.source.id + " circle").attr("fill", 'red');
+            d3.select("#node_" + d.source.id + " text").attr("visibility", "visible");
+            d3.select("#node_" + d.target.id + " circle").attr("fill", 'blue');
+            d3.select("#node_" + d.target.id + " text").attr("visibility", "visible");
           })
-          .on('mouseout', function () {
-            d3.select(this).attr("stroke-width", d => d.weight);
+          .on('mouseout', function (d) {
+            d3.select(this)
+              .attr("stroke-width", d => d.weight)
+              .attr("stroke", d => d.id == self.curLinkId ? '#fff' : d.color);
+            d3.select("#node_" + d.source.id + " circle").attr("fill", d => d.color);
+            d3.select("#node_" + d.source.id + " text").attr("visibility", "hidden");
+            d3.select("#node_" + d.target.id + " circle").attr("fill", d => d.color);
+            d3.select("#node_" + d.target.id + " text").attr("visibility", "hidden");
+          })
+          .on("dblclick", (d) => {
+          })
+          .on('contextmenu', function (d) { // 右键来获取相连的节点
+            d3.event.preventDefault();
+            // self.getNeribor2tab(d)
           })
 
+        function refleshLink(linkId) {
+          d3.select(document.getElementById(linkId))
+            .attr("stroke-width", d => d.weight)
+            .attr("stroke", d => d.color)
+            .attr("stroke-opacity", d => d.opacity)
+        }
 
         //绘制节点
         // 给节点 边 标签 添加交互
@@ -280,7 +292,6 @@
             return "node_" + d.id;
           })
 
-        let selectNode;
         let circles = svg_nodes_g
           .append("circle")
           .attr("class", "forceCircle")
@@ -290,9 +301,9 @@
           .attr('stroke', d => d.stroke)
           .attr("fill", (d) => d.color = color(d.group))
           .attr('opacity', d => d.opacity)
-          .on("dblclick", (d) => {
+          .on("dblclick", (d) => { // 查找最短路径
             d3.select(document.getElementById(d.id))
-              .attr('r', 10)
+              .attr('r', 10);
             if (this.shortNode.length == 2) {
               d3.select(document.getElementById(this.shortNode[0]))
                 .attr('r', '5')
@@ -301,37 +312,48 @@
             this.shortNode.push(d.id)
           })
           .on('click', function (d) {
-            // 更新节点的静态信息
-            self.$parent.$children[0].updated(d); // control 组件
-            // 更新选中节点的样式
-            self.selectOneNode(d.id)
-            selectNode = d3.select(this)
-            self.curNodeId = d.id
+            // 更新控制面板control中  节点的静态信息
+            self.$parent.$children[0].updated(d);
+            // 之前节点变为原来的样式
+            reflesh(self.curNodeId);
+            // 更新选中节点
+            self.nodeHight(d3.select(document.getElementById(d.id)));
+            self.curNodeId = d.id;
           })
           .on('mouseover', function (d) {
-            self.nodeHight(d3.select(this))
-            if (self.isNer) {
+            // 按下shift按键后获取邻居节点
+            if (d3.event.shiftKey) {
               self.getNeribor2tab(d)
-            }
-            if (selectNode) {  // 防止当在找邻居的时候目标丢失
-              self.nodeHight(selectNode);
+            } else { //
+              self.nodeOver(d3.select(document.getElementById(d.id)));
             }
           })
-          .on('mouseout', function () {
-            self.nodeDark(d3.select(this))
-            if (self.isNer) {
-              self.leaveNode()
+          .on('mouseout', function (d) {
+            if (d.id == self.curNodeId) {
+              self.nodeHight(d3.select(document.getElementById(d.id)));
+            } else {
+              self.nodeOut(d3.select(document.getElementById(d.id)));
             }
-            if (selectNode) {
-              self.nodeHight(selectNode)
+            if (JSON.stringify(self.neribor) !== '{}' && self.neriborFlag) {
+              self.neribor.nodeId.forEach(item => {
+                self.nodeOut(d3.select(document.getElementById(item)));
+              })
+              self.neriborFlag = false; // 标记  邻居节点没有更新就不执行
             }
           })
           .on('contextmenu', function (d) { // 右键来获取相连的节点
             d3.event.preventDefault();
-            self.getNeribor2tab(d)
+            // self.getNeribor2tab(d)
           })
           .call(force.drag);
 
+
+        function reflesh(Id) {
+          d3.select(document.getElementById(Id))
+            .attr('stroke', d => d.stroke)
+            .attr('stroke-width', d => d.strokeWidth)
+            .attr('opacity', d => d.opacity)
+        }
 
         // 标签  默认不显示
         let lables = svg_nodes_g
@@ -497,7 +519,7 @@
         // 添加动态属性
         this.obj.fisheye = fisheye
 
-
+        // 初始化默认选中的节点和边 当前选中节点的ID 和边的ID
         this.selectInitNode(this.nodes[0].id)
         this.selectInitLink(this.links[0].id)
         this.curNodeId = this.nodes[0].id
@@ -811,28 +833,19 @@
           response.data.nodeId.forEach((item) => {
             // d3 直接选取数字id会报错
             d3.select(document.getElementById(item))
-              .attr('stroke', d => d.color = 'yellow')
+              .attr('stroke', '#ffd24c')
               .attr('stroke-width', 2)
               .attr('opacity', 1)
           })
           let result = this.neribor.nodeId.map((item) => {
             return this.dataObj[+item]
           })
-          PubSub.publish('find', result) //
+          this.neriborFlag = true;
+          PubSub.publish('find', result); //
         })
           .catch(function (error) {
             console.log(error)
           })
-      },
-      leaveNode() {
-        if (this.neribor.length == 0) {
-          return
-        }
-        this.neribor.nodeId.forEach((item) => {
-          d3.select(document.getElementById(item))    // d3 直接选取数字id会报错
-            .attr('stroke-width', 0)
-            .attr('opacity', (d) => d.opacity)
-        })
       },
       selectNode(item) {
         d3.select(document.getElementById(item))
@@ -847,45 +860,40 @@
           .attr('stroke-width', (d) => d.strokeWidth)
           .attr('opacity', (d) => d.opacity)
       },
-      resetLink() {
-        this.obj.lines
-          .attr('stroke', d => d.color)
-          .attr('stroke-width', d => d.weight)
-          .attr('stroke-opacity', (d) => d.opacity)
-      },
       operation(command) {
         (this.$parent.$children)[2].operation(command)
       },
-      selectOneNode(item) {
-        this.resetNode()
+      selectInitNode(item) { // 传递选择节点的id
         this.nodeHight(d3.select(document.getElementById(item)))
       },
-      selectInitNode(item) {
-        this.nodeHight(d3.select(document.getElementById(item)))
-      },
-      selectOneLink(item) {
-        this.resetLink()
+      linkHight(item) {
         d3.select('#link_' + item)
-          .attr('stroke', "#eee")
+          .attr('stroke', '#fff')
           .attr('stroke-width', 2)
           .attr('stroke-opacity', 1)
       },
       nodeHight(item) {
         item
-          .attr('stroke', "#eee")
-          .attr('stroke-width', 2)
+          .attr('stroke', "#fff")
+          .attr('stroke-width', 3)
           .attr('opacity', 1)
       },
-      nodeDark(item) {  // 节点变暗
+      nodeOver(item) { // 鼠标悬浮时候的样式
         item
-          .attr('stroke', "#eee")
-          .attr('stroke-width', 0)
-          .attr('opacity', 1)
+          .attr('stroke', "#b46fff")
+          .attr('stroke-width', 3)
+          .attr('opacity', 0.8)
+      },
+      nodeOut(item) { // 鼠标离开时候的样式
+        item
+          .attr('stroke-width', d => d.strokeWidth) // 默认stroke都为0
+          .attr('stroke', d => d.stroke)
+          .attr('opacity', d => d.opacity)
       },
       selectInitLink(item) {
         d3.select('#link_' + item)
-          .attr('stroke', "#eee")
-          .attr('stroke-width', 2)
+          .attr('stroke', "#fff")
+          .attr('stroke-width', 3)
           .attr('stroke-opacity', 1)
       },
       setLabelType(value) {

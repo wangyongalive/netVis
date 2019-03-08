@@ -159,18 +159,21 @@
           tooltip.style.display = 'none'
         }
         demoWrapper.onclick = function (ev) {
+          self.$parent.zoom.scale(1); // 改变当前的缩放比例
           let currentX = ev.offsetX;
           let currentY = ev.offsetY;
           let positionX = ((currentX - width) / width) * currentGWidth;
           let positionY = ((currentY - height) / height) * currentGHeight;
           if (self.$store.state.translate) {
             self.$store.dispatch('changeScaleTrans', {
-              scale: self.$store.state.scale,
+              scale: 1,
               translate: [-positionX, -positionY]
             })
-            d3.select('.g_cirLink').attr("transform", `translate(${self.$store.state.translate})`);
+            d3.select('.g_cirLink').attr("transform", `translate(${self.$store.state.translate})scale(1)`);
+            self.$parent.zoom.translate(`${self.$store.state.translate}`);
           } else {
-            d3.select('.g_cirLink').attr("transform", `translate(${-positionX},${-positionY})`);
+            d3.select('.g_cirLink').attr("transform", `translate(${-positionX},${-positionY})scale(1)`);
+            self.$parent.zoom.translate([-positionX, -positionY]);
           }
         };
         /* 提示框结束*/
