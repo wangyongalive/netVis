@@ -25,12 +25,6 @@
                  title="鱼眼"
       ></el-button>
       <el-button type="info"
-                 @click="setNer"
-                 class="iconfont icon-fujin"
-                 size="small"
-                 title="获取邻居节点"
-      ></el-button>
-      <el-button type="info"
                  @click="getForm"
                  class="iconfont icon-tool-DataMatrix"
                  size="small"
@@ -86,23 +80,6 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-button>
-      <el-button type="info"
-                 size="small"
-                 title="网络分层"
-      >
-        <el-dropdown size="mini"
-                     @command="handleCommand"
-                     placement="bottom-start"
-        >
-          <span class="iconfont icon-_division"></span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="最顶层">最顶层</el-dropdown-item>
-            <el-dropdown-item command="上一层" divided :disabled="lay ===0">上一层</el-dropdown-item>
-            <el-dropdown-item command="下一层" divided :disabled="lay === lays-1">下一层</el-dropdown-item>
-            <el-dropdown-item command="最底层" divided>最底层</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </el-button>
     </el-button-group>
     <div id="svg-wrap"></div>
     <!--异步获取数据，直接获取数据为空-->
@@ -132,23 +109,17 @@
         links: [],
         brushLink: [],
         shortNode: [],
-        degree: [],
-        lays: 0,
-        lay: 0, // 默认从第0层开始
         neribor: {},
         neiborFlag: false,
         shortPathList: '',
         subGraph: [],
         subIndex: 0,
-        isNer: false,
         curNodeId: '',
         curLinkId: '',
         dataObj: {},
         dataObjLink: {},
         subMapData: [],
-        zoom: null,
-        // allNodes: [],
-        // allLinks: []
+        zoom: null
       }
     },
     mounted() {
@@ -172,7 +143,7 @@
       // 订阅消息
       // 回调函数用箭头函数
       PubSub.subscribe('getNode', (msg, index) => {
-        this.resetNode()
+        this.resetNode();
         index.forEach((item) => this.selectNode(item))
       })
     },
@@ -250,23 +221,36 @@
             d3.select(this)
               .attr("stroke-width", d => d.weight * 2)
               .attr("stroke", "#b46fff");
-            d3.select("#node_" + d.source.id + " circle").attr("fill", 'red');
+            d3.select("#node_" + d.source.id + " circle")
+              .attr('stroke', "#b46fff")
+              .attr('stroke-width', 3)
+              .attr('opacity', 1);
             d3.select("#node_" + d.source.id + " text").attr("visibility", "visible");
-            d3.select("#node_" + d.target.id + " circle").attr("fill", 'blue');
+            d3.select("#node_" + d.target.id + " circle")
+              .attr('stroke', "#b46fff")
+              .attr('stroke-width', 3)
+              .attr('opacity', 1);
             d3.select("#node_" + d.target.id + " text").attr("visibility", "visible");
           })
           .on('mouseout', function (d) {
             d3.select(this)
               .attr("stroke-width", d => d.weight)
               .attr("stroke", d => d.id == self.curLinkId ? '#fff' : d.color);
-            d3.select("#node_" + d.source.id + " circle").attr("fill", d => d.color);
+            d3.select("#node_" + d.source.id + " circle")
+              .attr('stroke-width', d => d.strokeWidth)
+              .attr('stroke', d => d.stroke)
+              .attr('opacity', d => d.opacity)
             d3.select("#node_" + d.source.id + " text").attr("visibility", "hidden");
-            d3.select("#node_" + d.target.id + " circle").attr("fill", d => d.color);
+            d3.select("#node_" + d.target.id + " circle")
+              .attr('stroke-width', d => d.strokeWidth)
+              .attr('stroke', d => d.stroke)
+              .attr('opacity', d => d.opacity)
             d3.select("#node_" + d.target.id + " text").attr("visibility", "hidden");
+
           })
           .on("dblclick", (d) => {
           })
-          .on('contextmenu', function (d) { // 右键来获取相连的节点
+          .on('contextmenu', function (d) {
             d3.event.preventDefault();
             // self.getNeribor2tab(d)
           })
@@ -301,7 +285,7 @@
           .attr("id", d => d.id)
           .attr('stroke-width', d => d.strokeWidth) // 默认stroke都为0
           .attr('stroke', d => d.stroke)
-          .attr("fill", (d) => d.color = color(d.group))
+          .attr("fill", d => d.color = color(d.group))
           .attr('opacity', d => d.opacity)
           .on("dblclick", (d) => { // 双击和单击会同时触发
           })
@@ -557,46 +541,28 @@
         })
       },
       changefish() {
+        let that = this;
         if (this.obj.fish) {
-          // 禁止使用fisheye
-          // svg.on("mousemove",null)
-          this.obj.fish = !this.obj.fish
+          this.obj.fish = !this.obj.fish // 禁止使用fisheye
           this.obj.mainsvg.on("mousemove", null)
         } else {
           this.obj.fish = !this.obj.fish
-          let that = this
           this.obj.mainsvg.on("mousemove", function () {
-
             that.obj.fisheye.focus(d3.mouse(this));
-
-            that.obj.circles.each(function (d) {
+            that.obj.circles.each(d => {
               d.fisheye = that.obj.fisheye(d);
             })
-              .attr("cx", function (d) {
-                return d.fisheye.x;
-              })
-              .attr("cy", function (d) {
-                return d.fisheye.y;
-              })
-              .attr("r", function (d) {
-                return d.fisheye.z * 5;
-              })
+              .attr("cx", d => d.fisheye.x)
+              .attr("cy", d => d.fisheye.y)
+              .attr("r", d => d.fisheye.z * 5);
 
-            that.obj.lines.attr("x1", function (d) {
-              return d.source.fisheye.x;
-            })
-              .attr("y1", function (d) {
-                return d.source.fisheye.y;
-              })
-              .attr("x2", function (d) {
-                return d.target.fisheye.x;
-              })
-              .attr("y2", function (d) {
-                return d.target.fisheye.y;
-              })
-              .attr("stroke", function (d) {
-                return d.source.fisheye.z != 1 && d.target.fisheye.z != 1 ? '#fff' : '#303030'
-              })
+            that.obj.lines
+              .attr("x1", d => d.source.fisheye.x)
+              .attr("y1", d => d.source.fisheye.y)
+              .attr("x2", d => d.target.fisheye.x)
+              .attr("y2", d => d.target.fisheye.y)
+              .attr("stroke", d => d.source.fisheye.z != 1 && d.target.fisheye.z != 1 ? '#fff' : d.color)
+              .attr("stroke-width", d => d.weight)
           });
         }
       },
@@ -640,9 +606,8 @@
               path: JSON.stringify([this.shortNode[1], this.shortNode[0]])
             }
           }).then((response) => {
-            this.shortPathList = response
+            this.shortPathList = response;
             response.data['node'].forEach((item) => {
-              // d3 直接选取数字id会报错
               d3.select(document.getElementById(item))
                 .transition() // 启动过渡效果
                 .delay(100)
@@ -655,7 +620,6 @@
             })
 
             response.data['link'].forEach((item) => {
-              // d3 直接选取数字id会报错
               d3.select('#link_' + item)
                 .transition() // 启动过渡效果
                 .delay(100)
@@ -667,20 +631,18 @@
           })
         } else { //  关闭最短路径
           this.obj.shortPath = !this.obj.shortPath
-
           this.shortPathList.data['node'].forEach((item) => {
-            // d3 直接选取数字id会报错
             d3.select(document.getElementById(item))
               .transition() // 启动过渡效果
               .delay(100)
               .duration(200)
               .ease("bounce")
               .attr('r', 5)
-              .attr('stroke-width', 0)
+              .attr('stroke-width', d => d.weight)
               .attr('opacity', (d) => d.opacity)
           })
           this.shortPathList.data['link'].forEach((item) => {
-            d3.select('#link_' + item) // d3 直接选取数字id会报错
+            d3.select('#link_' + item)
               .transition() // 启动过渡效果
               .delay(100)
               .duration(200)
@@ -769,67 +731,6 @@
         } else {
           emptyNodeLinkData()
           document.getElementById("buildGraph").innerHTML = ""
-        }
-      },
-      // community() {
-      //   axios.get('/get/community').then((response) => {
-      //     console.log(response);
-      //   })
-      //     .catch(function (error) {
-      //       console.log('获取数据出错: ' + error)
-      //     })
-      // },
-      // getDegree() {
-      //   // 网络分层
-      //   let s = new Set()
-      //   this.nodes.map((item) => {
-      //     s.add(item.degree)
-      //   })
-      //   // 根据度来分组
-      //   this.degree = [...s].map((item) => parseInt(item))
-      //   this.degree = this.degree.sort((a, b) => a - b)
-      //   this.lays = this.degree.length
-      //   this.allNodes = this.nodes
-      //   this.allLinks = this.links
-      // },
-      // division(index) {
-      //   let showDegree = [] // 要显示的节点
-      //   this.allNodes.forEach((value) => {
-      //     if (value.degree == this.degree[index]) {
-      //       showDegree.push(value.id)
-      //     }
-      //   });
-      //   // 如何知道showDegree之间节点的连接关系 在后台处理
-      //   let params = qs.stringify({
-      //     data: JSON.stringify(showDegree)
-      //   })
-      //   axios.post('/get/division', params).then((response) => {
-      //     this.nodes = response.data.nodes
-      //     this.links = response.data.links
-      //     this.renderChart()
-      //   })
-      //     .catch(function (error) {
-      //       console.log('获取数据出错: ' + error)
-      //     })
-      // },
-      handleCommand(command) {
-        switch (command) {
-          case '最顶层':
-            this.lay = 0
-            this.division(this.lay)
-            break
-          case '上一层':
-            this.lay--
-            this.division(this.lay)
-            break
-          case '下一层':
-            this.lay++
-            this.division(this.lay)
-            break
-          case '最底层':
-            this.lays = this.lay
-            this.division(this.lays - 1)
-            break
         }
       },
       getNeribor2tab(d) {
@@ -1013,9 +914,6 @@
           d3.select(document.getElementById(this.curNodeId))
             .attr("opacity", d => d.opacity = value) // 更新内存中的属性值
         }
-      },
-      setNer() {
-        this.isNer = !this.isNer
       }
     },
     // 声明一个本地的过滤器
