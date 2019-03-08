@@ -222,17 +222,6 @@
           .call(zoom);
 
         function zoomed() {
-          // d3当中平移和缩放操作是放在一起的
-          // 当按下ctrl按键时候 就使用d3.event
-          // 要平移就要使用ctrl按键
-          if (d3.event.sourceEvent.ctrlKey) {
-            svg_g.attr("transform", `translate(${d3.event.translate})scale(${d3.event.scale})`);
-            self.$store.dispatch('changeScaleTrans', {
-              scale: d3.event.scale,
-              translate: d3.event.translate
-            })
-            return;
-          }
           let translate;
           // 如果vuex中已经存在了translate 则使用vue中的translate
           if (self.$store.state.translate) {
@@ -244,7 +233,9 @@
             scale: d3.event.scale,
             translate: translate
           })
-          svg_g.attr("transform", `translate(${self.$store.state.translate})scale(${self.$store.state.scale})`);
+          let x1 = d3.event.translate[0] + self.$store.state.translate[0];
+          let y1 = d3.event.translate[1] + self.$store.state.translate[1];
+          svg_g.attr("transform", `translate(${x1},${y1})scale(${d3.event.scale})`);
         }
 
         // 把所有的圆和线都放到一个g元素中
@@ -324,7 +315,6 @@
             }
             if (selectNode) {  // 防止当在找邻居的时候目标丢失
               self.nodeHight(selectNode);
-
             }
           })
           .on('mouseout', function () {
@@ -399,7 +389,6 @@
           if (force.alpha() <= 0.01) {
             self.subMapData = self.nodes
           }
-
           // force.stop(); // 渲染完成后立即停止刷新
           // }
         });
