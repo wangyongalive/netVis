@@ -281,13 +281,13 @@
         let circles = svg_nodes_g
           .append("circle")
           .attr("class", "forceCircle")
-          .attr("r", 5)
+          .attr("r", d => d.size)
           .attr("id", d => d.id)
           .attr('stroke-width', d => d.strokeWidth) // 默认stroke都为0
           .attr('stroke', d => d.stroke)
           .attr("fill", d => d.color = color(d.group))
           .attr('opacity', d => d.opacity)
-          .on("dblclick", (d) => { // 双击和单击会同时触发
+          .on("dblclick", d => { // 双击和单击会同时触发
           })
           .on('click', function (d) {
             // 更新控制面板control中  节点的静态信息
@@ -505,12 +505,12 @@
         svg.call(lasso);
 
         // 鱼眼
-        var fisheye = d3.fisheye.circular()
+        let fisheye = d3.fisheye.circular()
           .radius(200)
           .distortion(2);
 
         // 添加动态属性
-        this.obj.fisheye = fisheye
+        this.obj.fisheye = fisheye;
 
         // 初始化默认选中的节点和边 当前选中节点的ID 和边的ID
         this.selectInitNode(this.nodes[0].id)
@@ -543,8 +543,14 @@
       changefish() {
         let that = this;
         if (this.obj.fish) {
-          this.obj.fish = !this.obj.fish // 禁止使用fisheye
-          this.obj.mainsvg.on("mousemove", null)
+          this.obj.fish = !this.obj.fish; // 禁止使用fisheye
+          this.obj.mainsvg.on("mousemove", null);
+          that.obj.circles
+            .transition() // 启动过渡效果
+            .delay(100)
+            .duration(200)
+            .ease("bounce")
+            .attr("r", d => d.size); // 变为原来的大小
         } else {
           this.obj.fish = !this.obj.fish
           this.obj.mainsvg.on("mousemove", function () {
@@ -555,7 +561,6 @@
               .attr("cx", d => d.fisheye.x)
               .attr("cy", d => d.fisheye.y)
               .attr("r", d => d.fisheye.z * 5);
-
             that.obj.lines
               .attr("x1", d => d.source.fisheye.x)
               .attr("y1", d => d.source.fisheye.y)
