@@ -48,7 +48,8 @@
         info: '',
         dataObj: {},
         nodeAll: false, //   标记是修改所有的节点还是选中的节点 默认是修改选中的节点
-        linkAll: false
+        linkAll: false,
+        folder: {}
       }
     },
     computed: {
@@ -159,6 +160,8 @@
           this['边总量'] = info.nedges
           this['图密度'] = info.density
           this['平均度'] = info.average_degree
+          this['节点a'] = ''
+          this['节点b'] = ''
           this.change = self.layout // 默认值
           this.feature = '特征类别'
           this['修改所有节点'] = false
@@ -197,6 +200,11 @@
         f0.add(options, '边总量').listen()
         f0.add(options, '图密度').listen()
         f0.add(options, '平均度').listen()
+
+        this.folder = gui.addFolder('最短路径');
+        this.folder.add(options, '节点a').listen();
+        this.folder.add(options, '节点b').listen();
+
 
         let f1 = gui.addFolder('节点样式');
         let node_all = f1.add(options, '修改所有节点').listen();
@@ -809,7 +817,14 @@
         this.options['节点填充'] = item.color;
         this.options['节点透明度'] = +item.opacity;
 
-
+      },
+      updateNodea(item) {
+        this.folder.open();
+        this.options['节点a'] = item;
+      },
+      updateNodeb(item) {
+        this.folder.open();
+        this.options['节点b'] = item;
       },
       restore() { // 根据刷新的结果 更新
         if (this.item_list.degree.brush.empty()

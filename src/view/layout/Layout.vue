@@ -292,6 +292,8 @@
             return "node_" + d.id;
           })
 
+        let index = 0;
+        let idArr = [];
         let circles = svg_nodes_g
           .append("circle")
           .attr("class", "forceCircle")
@@ -301,15 +303,7 @@
           .attr('stroke', d => d.stroke)
           .attr("fill", (d) => d.color = color(d.group))
           .attr('opacity', d => d.opacity)
-          .on("dblclick", (d) => { // 查找最短路径
-            d3.select(document.getElementById(d.id))
-              .attr('r', 10);
-            if (this.shortNode.length == 2) {
-              d3.select(document.getElementById(this.shortNode[0]))
-                .attr('r', '5')
-              this.shortNode.shift()
-            }
-            this.shortNode.push(d.id)
+          .on("dblclick", (d) => { // 双击和单击会同时触发
           })
           .on('click', function (d) {
             // 更新控制面板control中  节点的静态信息
@@ -323,7 +317,7 @@
           .on('mouseover', function (d) {
             // 按下shift按键后获取邻居节点
             if (d3.event.shiftKey) {
-              self.getNeribor2tab(d)
+              self.getNeribor2tab(d);
             } else { //
               self.nodeOver(d3.select(document.getElementById(d.id)));
             }
@@ -341,9 +335,24 @@
               self.neriborFlag = false; // 标记  邻居节点没有更新就不执行
             }
           })
-          .on('contextmenu', function (d) { // 右键来获取相连的节点
+          .on('contextmenu', function (d) { // 右键添加最短路径节点
             d3.event.preventDefault();
-            // self.getNeribor2tab(d)
+            if (index % 2) {
+              self.$parent.$children[0].updateNodeb(d.id);
+              idArr.push(d.id);
+              self.shortNode[0] = d.id;
+            } else {
+              self.$parent.$children[0].updateNodea(d.id);
+              idArr.push(d.id);
+              self.shortNode[1] = d.id;
+            }
+            index++;
+            if (index > 2) {
+              d3.select(document.getElementById(idArr[index - 3]))
+                .attr('fill', d => d.color);
+            }
+            d3.select(document.getElementById(d.id))
+              .attr('fill', '#df4337');
           })
           .call(force.drag);
 
@@ -375,11 +384,11 @@
           })
           .on("dragend", function (d) {
             // 拖拽结束后变为原来的颜色
-            d3.select(this).style("fill", color(d.group));
+            d3.select(this).attr("fill", color(d.group));
           })
           .on("drag", function () {
             // 拖拽中对象变为黄色
-            d3.select(this).style("fill", "yellow");
+            d3.select(this).attr("fill", "yellow");
           });
 
         // 这个由两个作用 一个是当鼠标悬浮的时候 显示标题
@@ -496,7 +505,7 @@
           .attr("class", "rect_lasso")
           .attr("width", width)
           .attr("height", height)
-          .style("fill", "none");
+          .attr("fill", "none");
 
         // Define the lasso
         let lasso = d3.lasso()
@@ -595,19 +604,19 @@
         if (this.obj.state == 'rect_contain') {
           this.obj.state = 'rect_lasso'
           d3.select(".rect_contain")
-            .style("fill", "none")
-            .style("opacity", "initial")
+            .attr("fill", "none")
+            .attr("opacity", "initial")
           d3.select(".rect_lasso")
-            .style("opacity", "0")
-            .style("fill", "initial")
+            .attr("opacity", "0")
+            .attr("fill", "initial")
         } else {
           this.obj.state = "rect_contain"
           d3.select(".rect_lasso")
-            .style("fill", "none")
-            .style("opacity", "initial")
+            .attr("fill", "none")
+            .attr("opacity", "initial")
           d3.select(".rect_contain")
-            .style("opacity", "0")
-            .style("fill", "initial")
+            .attr("opacity", "0")
+            .attr("fill", "initial")
         }
       },
       changeDrag() {
