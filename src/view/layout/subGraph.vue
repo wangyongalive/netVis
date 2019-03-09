@@ -17,8 +17,8 @@
             position: 'absolute',
             right: 0,
             top: 0,
-            width: '236px',
-            height: '236px',
+            width: '250px',
+            height: '250px',
             border: 'solid gray',
             'z-index': '1000',
             'border-width': '0 0 1px 1px'

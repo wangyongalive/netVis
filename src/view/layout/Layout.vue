@@ -83,8 +83,7 @@
         </el-dropdown>
       </el-button>
     </el-button-group>
-    <!--<div id="svg-wrap"></div>-->
-    <subgraph></subgraph>
+    <subgraph v-if="showSubgraph"></subgraph>
     <!--异步获取数据，直接获取数据为空-->
     <subgraph-heatmap :width="250|toPx" :height="250|toPx" :datas="subMapData"
                       v-if="subMapData.length"
@@ -160,7 +159,8 @@
         zoom: null,
         fishRadius: 200,
         fishDistortion: 2,
-        isShow: 'none'
+        isShow: 'none',
+        showSubgraph: false
       }
     },
     mounted() {
@@ -771,14 +771,17 @@
 
       },
       buildgraph(command) {
-        // 调用组件subGraph里面的方法
-        this.$children.forEach(item => {
-          if (item.$options.name === 'subGraph') {
-            console.log(item);
-            item.buildgraph(command);
-            return;
-          }
-        })
+        this.showSubgraph = true;
+        // 使用了v-if 要将事件放在$nextTick中才会立即执行
+        this.$nextTick(() => {
+          this.$children.forEach(item => {
+            // 调用组件subGraph里面的方法
+            if (item.$options.name === 'subGraph') {
+              item.buildgraph(command);
+              return;
+            }
+          })
+        });
       },
       getNeribor2tab(d) {
         axios.get('/get/neibor', {
