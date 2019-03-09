@@ -83,7 +83,8 @@
         </el-dropdown>
       </el-button>
     </el-button-group>
-    <div id="svg-wrap"></div>
+    <!--<div id="svg-wrap"></div>-->
+    <subgraph></subgraph>
     <!--异步获取数据，直接获取数据为空-->
     <subgraph-heatmap :width="250|toPx" :height="250|toPx" :datas="subMapData"
                       v-if="subMapData.length"
@@ -127,15 +128,17 @@
 <script>
   import axios from 'axios'
   import qs from 'qs'
-  import {build, getNodeLinkData, emptyNodeLinkData, isempty} from '@/util/index'
   import {flatten} from '@/util/utils'
   import matrix from './matrix'
   import subgraphHeatmap from './subgraphHeatmap'
+  import {getNodeLinkData, isempty} from '@/util/index' // 子图的方法 导入可以共同使用
+  import subgraph from './subGraph' // 子图组件
 
   export default {
     name: "Layout",
     components: {
-      subgraphHeatmap
+      subgraphHeatmap,
+      subgraph
     },
     data() {
       return {
@@ -768,15 +771,14 @@
 
       },
       buildgraph(command) {
-        if (command === '创建网络') {
-          if (d3.select('#svg-wrap').select('svg')) {
-            d3.select('#svg-wrap').select('svg').remove()
+        // 调用组件subGraph里面的方法
+        this.$children.forEach(item => {
+          if (item.$options.name === 'subGraph') {
+            console.log(item);
+            item.buildgraph(command);
+            return;
           }
-          build()
-        } else {
-          emptyNodeLinkData()
-          document.getElementById("buildGraph").innerHTML = ""
-        }
+        })
       },
       getNeribor2tab(d) {
         axios.get('/get/neibor', {

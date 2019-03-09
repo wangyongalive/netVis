@@ -1,0 +1,44 @@
+/*子图查找的div*/
+//#svg-wrap {
+//  position: absolute;
+//  right: 0;
+//  top: 0;
+//  width: @subWidth;
+//  height: @subHeight;
+//  z-index: 1000;
+//  border: solid gray;
+//  border-width: 0 0 1px 1px;
+//}
+
+#svg-wrap /deep/ svg {
+  display: block;
+  margin: auto;
+}
+
+#svg-wrap /deep/ .edge {
+  stroke: #888;
+  opacity: 0.6;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  cursor: default;
+}
+
+#svg-wrap /deep/ .edge:hover, #svg-wrap /deep/ .dragLine {
+  stroke: #eee;
+  stroke-width: 3px;
+  opacity: 0.8;
+}
+
+#svg-wrap /deep/ .vertex {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+#svg-wrap /deep/ .vertex:hover {
+  opacity: 1;
+}
+
+#svg-wrap /deep/ .dragLine.hidden {
+  stroke-width: 0;
+}
