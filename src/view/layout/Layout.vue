@@ -23,7 +23,9 @@
                  class="iconfont icon-FishEyeCamera- "
                  size="small"
                  title="鱼眼"
-      ></el-button>
+                 @mouseover.native="fishHover"
+      >
+      </el-button>
       <el-button type="info"
                  @click="getForm"
                  class="iconfont icon-tool-DataMatrix"
@@ -86,6 +88,43 @@
     <subgraph-heatmap :width="250|toPx" :height="250|toPx" :datas="subMapData"
                       v-if="subMapData.length"
     ></subgraph-heatmap>
+    <div class="tooltipBlock" :style="{display:isShow}" @click="fishOut">
+      <div class="Block">
+        <span class="demonstration">radius</span>
+        <el-slider
+          class="BlockRight"
+          v-model="value1"
+          :max="300"
+          :min="100"
+        >
+        </el-slider>
+      </div>
+      <div class="Block">
+        <span class="demonstration">distortion</span>
+        <el-slider
+          class="BlockRight"
+          v-model="value2"
+          :step="1"
+          show-stops
+          :max="5"
+          :min="1"
+        >
+        </el-slider>
+      </div>
+      <div class="Block">
+        <span class="demonstration">fisheye</span>
+        <el-switch
+          class="BlockRight"
+          v-model="value4"
+          active-text="打开鱼眼"
+          inactive-text="关闭鱼眼">
+        </el-switch>
+      </div>
+      <div class="Block">
+        <span class="demonstration">配置确认</span>
+        <el-button  class="BlockRight">确认</el-button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -119,7 +158,11 @@
         dataObj: {},
         dataObjLink: {},
         subMapData: [],
-        zoom: null
+        zoom: null,
+        value1: 200,
+        value2: 2,
+        value4: true,
+        isShow: 'none'
       }
     },
     mounted() {
@@ -919,6 +962,12 @@
           d3.select(document.getElementById(this.curNodeId))
             .attr("opacity", d => d.opacity = value) // 更新内存中的属性值
         }
+      },
+      fishHover() {
+        this.isShow = 'block';
+      },
+      fishOut() {
+        this.isShow = 'none';
       }
     },
     // 声明一个本地的过滤器

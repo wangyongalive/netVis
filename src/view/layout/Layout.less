@@ -1,5 +1,11 @@
 @subWidth: 236px;
 @subHeight: 236px;
+@BlockHeight: 50px;
+@BlockMarginLeft: 20px;
+@BlockWidth: @tooltipBlockWidth - @BlockMarginLeft*2;
+@tooltipBlockWidth: 500px;
+@tooltipBlockHeight: @BlockHeight*4;
+
 
 /*子图查找的div*/
 #svg-wrap {
@@ -78,3 +84,62 @@
 #layout /deep/ .possible {
   opacity: .9;
 }
+
+/*提示框样式 start*/
+.tooltipBlock {
+  position: absolute;
+  width: @tooltipBlockWidth;
+  height: @tooltipBlockHeight;
+  border: 2px solid #262626;
+  background-color: #262626;
+  top: 55px;
+  left: 55px;
+  display: none;
+  border-radius: 10px;
+}
+
+.tooltipBlock:before {
+  position: absolute;
+  content: "";
+  top: -10px;
+  left: 25px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #262626;
+}
+
+.tooltipBlock:after {
+  position: absolute;
+  content: "";
+  top: -8px;
+  left: 25px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #262626;
+}
+
+/*提示框样式 end*/
+
+.demonstration {
+  font-size: 14px;
+  color: #409EFF;
+  line-height: 3;
+}
+
+/*Block样式 start*/
+.Block {
+  width: @BlockWidth;
+  height: @BlockHeight;
+  background-color: #262626;
+  margin-left: @BlockMarginLeft;
+}
+
+//.Block /deep/ .el-slider {
+//  float: right;
+//  width: 80%;
+//}
+.BlockRight{
+  float: right;
+  width: 80%;
+}
+/*Block样式 end*/
