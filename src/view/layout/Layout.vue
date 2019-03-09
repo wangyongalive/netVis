@@ -88,12 +88,12 @@
     <subgraph-heatmap :width="250|toPx" :height="250|toPx" :datas="subMapData"
                       v-if="subMapData.length"
     ></subgraph-heatmap>
-    <div class="tooltipBlock" :style="{display:isShow}" @click="fishOut">
+    <div class="tooltipBlock" :style="{display:isShow}" @mouseleave="changefish">
       <div class="Block">
         <span class="demonstration">radius</span>
         <el-slider
           class="BlockRight"
-          v-model="value1"
+          v-model="fishRadius"
           :max="300"
           :min="100"
         >
@@ -103,7 +103,7 @@
         <span class="demonstration">distortion</span>
         <el-slider
           class="BlockRight"
-          v-model="value2"
+          v-model="fishDistortion"
           :step="1"
           show-stops
           :max="5"
@@ -115,14 +115,10 @@
         <span class="demonstration">fisheye</span>
         <el-switch
           class="BlockRight"
-          v-model="value4"
+          v-model="obj.fish"
           active-text="打开鱼眼"
           inactive-text="关闭鱼眼">
         </el-switch>
-      </div>
-      <div class="Block">
-        <span class="demonstration">配置确认</span>
-        <el-button  class="BlockRight">确认</el-button>
       </div>
     </div>
   </div>
@@ -159,9 +155,8 @@
         dataObjLink: {},
         subMapData: [],
         zoom: null,
-        value1: 200,
-        value2: 2,
-        value4: true,
+        fishRadius: 200,
+        fishDistortion: 2,
         isShow: 'none'
       }
     },
@@ -584,9 +579,9 @@
         })
       },
       changefish() {
+        this.fishOut();
         let that = this;
-        if (this.obj.fish) {
-          this.obj.fish = !this.obj.fish; // 禁止使用fisheye
+        if (!this.obj.fish) {
           this.obj.mainsvg.on("mousemove", null);
           that.obj.circles
             .transition() // 启动过渡效果
@@ -595,7 +590,9 @@
             .ease("bounce")
             .attr("r", d => d.size); // 变为原来的大小
         } else {
-          this.obj.fish = !this.obj.fish
+          that.obj.fisheye
+            .radius(that.fishRadius)
+            .distortion(that.fishDistortion);
           this.obj.mainsvg.on("mousemove", function () {
             that.obj.fisheye.focus(d3.mouse(this));
             that.obj.circles.each(d => {
@@ -968,6 +965,9 @@
       },
       fishOut() {
         this.isShow = 'none';
+      },
+      test() {
+        console.log('233');
       }
     },
     // 声明一个本地的过滤器
