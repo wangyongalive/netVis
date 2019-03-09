@@ -1,70 +1,52 @@
-//node ids are in order in which nodes come in existence
-let mynodes = [
-  {
-    id: 1
-  },
-  {
-    id: 2
-  },
-  {
-    id: 3
-  },
-]
-let mylinks = [
-  {
-    source: 0,
-    target: 1
-  },
-  {
-    source: 0,
-    target: 2
-  },
-  {
-    source: 1,
-    target: 2
-  }
-]
+// 右键删除 左键添加
+let mynodes = [{
+  id: 1
+}, {
+  id: 2
+}, {
+  id: 3
+}]
+let mylinks = [{
+  source: 0,
+  target: 1
+}, {
+  source: 0,
+  target: 2
+}, {
+  source: 1,
+  target: 2
+}]
 
 export function build() {
-
+  // 当网络为空时
   if (mynodes.length == 0 || mylinks.length == 0) {
-    mylinks = [
-      {
-        source: 0,
-        target: 1
-      },
-      {
-        source: 0,
-        target: 2
-      },
-      {
-        source: 1,
-        target: 2
-      }
-    ]
-    mynodes = [
-      {
-        id: 1
-      },
-      {
-        id: 2
-      },
-      {
-        id: 3
-      }
-    ]
+    mylinks = [{
+      source: 0,
+      target: 1
+    }, {
+      source: 0,
+      target: 2
+    }, {
+      source: 1,
+      target: 2
+    }]
+    mynodes = [{
+      id: 1
+    }, {
+      id: 2
+    }, {
+      id: 3
+    }]
   }
-//universal width and height let index.htm control svg dimensions when needed
+
   let lastNodeId = mynodes.length;
-  let w = 240,
-    h = 240,
-    rad = 5;
+  let w = 240, h = 240, rad = 5;
 
   let svg = d3.select("#svg-wrap")
     .append("svg")
     .attr("width", w)
     .attr("height", h)
-    .attr('id', 'buildGraph')
+    .attr('id', 'buildGraph');
 
 
   let dragLine = svg.append("path")
@@ -91,8 +73,7 @@ export function build() {
 
   let colors = d3.scale.category10();
 
-  let mousedownNode = null,
-    mouseupNode = null;
+  let mousedownNode = null, mouseupNode = null;
 
 
   function resetMouseVar() {
@@ -100,27 +81,16 @@ export function build() {
     mouseupNode = null;
   }
 
-//update the simulation
+  //  tick
   function tick() {
-    edges.attr("x1", function (d) {
-      return d.source.x;
-    })
-      .attr("y1", function (d) {
-        return d.source.y;
-      })
-      .attr("x2", function (d) {
-        return d.target.x;
-      })
-      .attr("y2", function (d) {
-        return d.target.y;
-      });
-
-    vertices.attr("cx", function (d) {
-      return d.x;
-    })
-      .attr("cy", function (d) {
-        return d.y;
-      });
+    // 边
+    edges.attr("x1", d => d.source.x)
+      .attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x)
+      .attr("y2", d => d.target.y);
+    // 节点
+    vertices.attr("cx", d => d.x)
+      .attr("cy", d => d.y);
 
   }
 
@@ -137,30 +107,31 @@ export function build() {
     }
   }
 
-  function removeNode(d, i) {
-    //to make ctrl-drag works for mac/osx users
-    if (d3.event.ctrlKey) return;
+  function removeNode(d) {
+    // 删除节点
     mynodes.splice(mynodes.indexOf(d), 1);
+    // 删除边
     let linksToRemove = mylinks.filter(function (l) {
       return l.source === d || l.target === d;
     });
     linksToRemove.map(function (l) {
       mylinks.splice(mylinks.indexOf(l), 1);
     });
+    // 阻止默认事件
     d3.event.preventDefault();
     restart();
   }
 
-  function removeEdge(d, i) {
+  function removeEdge(d) {
     mylinks.splice(mylinks.indexOf(d), 1);
     d3.event.preventDefault();
     restart();
   }
 
   function beginDragLine(d) {
-    //to prevent call of addNode through svg
+    // to prevent call of addNode through svg
     d3.event.stopPropagation();
-    //to prevent dragging of svg in firefox
+    // to prevent dragging of svg in firefox
     d3.event.preventDefault();
     if (d3.event.ctrlKey || d3.event.button != 0) return;
     mousedownNode = d;
@@ -181,8 +152,8 @@ export function build() {
     restart();
   }
 
-//no need to call hideDragLine() and restart() in endDragLine
-//mouseup on vertices propagates to svg which calls hideDragLine
+// no need to call hideDragLine() and restart() in endDragLine
+// mouseup on vertices propagates to svg which calls hideDragLine
   function endDragLine(d) {
     if (!mousedownNode || mousedownNode === d) return;
     //return if link already exists
@@ -199,7 +170,7 @@ export function build() {
     mylinks.push(newLink);
   }
 
-//one response per ctrl keydown
+// one response per ctrl keydown
   let lastKeyDown = -1;
 
   function keydown() {
@@ -219,12 +190,13 @@ export function build() {
   }
 
 
-//updates the graph by updating links, nodes and binding them with DOM
-//interface is defined through several events
+  // 通过更新链接、节点并将它们与DOM绑定来更新图表
   function restart() {
-    edges = edges.data(mylinks, function (d) {
-      return "v" + d.source.id + "-v" + d.target.id;
-    })
+    // 键函数  更新数据的对应规则
+    edges = edges.data(mylinks, d => {
+      return "v" + d.source.id + "-v" + d.target.id
+    });
+
     edges.enter()
       .append("line")
       .attr("class", "edge")
@@ -233,40 +205,33 @@ export function build() {
       })
       .on("contextmenu", removeEdge)
       .append("title")
-      .text(function (d) {
-        return "v" + d.source.id + "-v" + d.target.id;
-      });
+      .text(d => "v" + d.source.id + "-v" + d.target.id);
     edges.exit().remove();
 
-    //vertices are known by id
-    vertices = vertices.data(mynodes, function (d) {
-      return d.id;
-    });
-
+    // 节点
+    // 更新节点的对应规则
+    vertices = vertices.data(mynodes, d => d.id);
     vertices.enter()
       .append("circle")
       .attr("r", rad)
       .attr("class", "vertex")
-      .style("fill", function (d, i) {
-        return colors(d.id);
-      })
+      .style("fill", d => colors(d.id))
       .on("mousedown", beginDragLine)
       .on("mouseup", endDragLine)
       .on("contextmenu", removeNode)
       .append("title")
-      .text(function (d) {
-        return "v" + d.id;
-      });
-
+      .text(d => "v" + d.id);
     vertices.exit().remove();
+
+    // 重新开始
     force.start();
   }
 
-//further interface
+  // 画布上面注册的事件
   svg.on("mousedown", addNode)
     .on("mousemove", updateDragLine)
     .on("mouseup", hideDragLine)
-    .on("contextmenu", function () {
+    .on("contextmenu", () => {
       d3.event.preventDefault();
     })
     .on("mouseleave", hideDragLine);
@@ -274,7 +239,7 @@ export function build() {
   d3.select(window)
     .on('keydown', keydown)
     .on('keyup', keyup);
-  restart();
+     restart();
 }
 
 export function getNodeLinkData() {
