@@ -19,7 +19,6 @@
         </el-dropdown>
       </el-button>
       <el-button type="info"
-                 @click="changefish"
                  class="iconfont icon-FishEyeCamera- "
                  size="small"
                  title="鱼眼"
@@ -88,39 +87,44 @@
     <subgraph-heatmap :width="250|toPx" :height="250|toPx" :datas="subMapData"
                       v-if="subMapData.length"
     ></subgraph-heatmap>
-    <div class="tooltipBlock" :style="{display:isShow}" @mouseleave="changefish">
-      <div class="Block">
-        <span class="demonstration">radius</span>
-        <el-slider
-          class="BlockRight"
-          v-model="fishRadius"
-          :max="300"
-          :min="100"
-        >
-        </el-slider>
+    <transition
+      enter-active-class="animated bounceInDown"
+      leave-active-class="animated bounceOutUp"
+    >
+      <div class="tooltipBlock" v-if="isShow" @mouseleave="changefish">
+        <div class="Block">
+          <span class="demonstration">radius</span>
+          <el-slider
+            class="BlockRight"
+            v-model="fishRadius"
+            :max="300"
+            :min="100"
+          >
+          </el-slider>
+        </div>
+        <div class="Block">
+          <span class="demonstration">distortion</span>
+          <el-slider
+            class="BlockRight"
+            v-model="fishDistortion"
+            :step="1"
+            show-stops
+            :max="5"
+            :min="1"
+          >
+          </el-slider>
+        </div>
+        <div class="Block">
+          <span class="demonstration">fisheye</span>
+          <el-switch
+            class="BlockRight"
+            v-model="obj.fish"
+            active-text="打开鱼眼"
+            inactive-text="关闭鱼眼">
+          </el-switch>
+        </div>
       </div>
-      <div class="Block">
-        <span class="demonstration">distortion</span>
-        <el-slider
-          class="BlockRight"
-          v-model="fishDistortion"
-          :step="1"
-          show-stops
-          :max="5"
-          :min="1"
-        >
-        </el-slider>
-      </div>
-      <div class="Block">
-        <span class="demonstration">fisheye</span>
-        <el-switch
-          class="BlockRight"
-          v-model="obj.fish"
-          active-text="打开鱼眼"
-          inactive-text="关闭鱼眼">
-        </el-switch>
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -132,6 +136,7 @@
   import subgraphHeatmap from './subgraphHeatmap'
   import {getNodeLinkData, isempty} from '@/util/index' // 子图的方法 导入可以共同使用
   import subgraph from './subGraph' // 子图组件
+  import animate from 'animate.css'
 
   export default {
     name: "Layout",
@@ -159,7 +164,7 @@
         zoom: null,
         fishRadius: 200,
         fishDistortion: 2,
-        isShow: 'none',
+        isShow: false,
         showSubgraph: false
       }
     },
@@ -966,10 +971,10 @@
         }
       },
       fishHover() {
-        this.isShow = 'block';
+        this.isShow = true;
       },
       fishOut() {
-        this.isShow = 'none';
+        this.isShow = false;
       },
       test() {
         console.log('233');
