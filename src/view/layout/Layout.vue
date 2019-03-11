@@ -382,12 +382,12 @@
               self.shortNode[1] = d.id;
             }
             index++;
-            if (index > 2) {
-              d3.select(document.getElementById(idArr[index - 3]))
-                .attr('fill', d => d.color);
-            }
-            d3.select(document.getElementById(d.id))
-              .attr('fill', '#df4337');
+            // if (index > 2) {
+            //   d3.select(document.getElementById(idArr[index - 3]))
+            //     .attr('fill', d => d.color);
+            // }
+            // d3.select(document.getElementById(d.id))
+            //   .attr('fill', '#df4337');
           })
           .call(force.drag);
 
@@ -671,7 +671,6 @@
                 .delay(100)
                 .duration(200)
                 .ease("bounce")
-                .attr('r', 8)
                 .attr('stroke', "#eee")
                 .attr('stroke-width', 2)
                 .attr('opacity', 1)
@@ -683,21 +682,22 @@
                 .delay(100)
                 .duration(200)
                 .ease("bounce")
+                .attr('stroke', '#fff')
                 .attr('stroke-width', 6)
                 .attr('stroke-opacity', 1)
             })
           })
         } else { //  关闭最短路径
-          this.obj.shortPath = !this.obj.shortPath
+          this.obj.shortPath = !this.obj.shortPath;
           this.shortPathList.data['node'].forEach((item) => {
             d3.select(document.getElementById(item))
               .transition() // 启动过渡效果
               .delay(100)
               .duration(200)
               .ease("bounce")
-              .attr('r', 5)
-              .attr('stroke-width', d => d.weight)
-              .attr('opacity', (d) => d.opacity)
+              .attr('stroke-width', d => d.strokeWidth)
+              .attr('opacity', d => d.opacity)
+              .attr('fill', d => d.color)
           })
           this.shortPathList.data['link'].forEach((item) => {
             d3.select('#link_' + item)
@@ -705,8 +705,9 @@
               .delay(100)
               .duration(200)
               .ease("bounce")
+              .attr('stroke', d => d.color)
               .attr('stroke-width', d => d.weight)
-              .attr('stroke-opacity', (d) => d.opacity)
+              .attr('opacity', d => d.opacity)
           })
         }
       },
