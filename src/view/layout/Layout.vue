@@ -263,10 +263,10 @@
           .attr("stroke-opacity", d => d.opacity)
           .on('click', d => {
             refleshLink(self.curLinkId);
-            (this.$parent.$children)[0].updateLink(d);
+            (self.$parent.$children)[0].updateLink(d);
             // 更新control选中的边
-            self.linkHight(d3.select(document.getElementById(d.id)));
-            this.curLinkId = d.id
+            self.linkHight(d.id);
+            self.curLinkId = d.id;
           })
           .on('mouseover', function (d) {
             d3.select(this)
@@ -307,10 +307,10 @@
           })
 
         function refleshLink(linkId) {
-          d3.select(document.getElementById(linkId))
+          d3.select(`#link_${linkId}`)
             .attr("stroke-width", d => d.weight)
             .attr("stroke", d => d.color)
-            .attr("stroke-opacity", d => d.opacity)
+            .attr("stroke-opacity", d => d.opacity);
         }
 
         //绘制节点
@@ -334,7 +334,7 @@
           .attr("class", "forceCircle")
           .attr("r", d => d.size)
           .attr("id", d => d.id)
-          .attr('stroke-width', d => d.strokeWidth) // 默认stroke都为0
+          .attr('stroke-width', d => d.strokeWidth) // 默认stroke都为1
           .attr('stroke', d => d.stroke)
           .attr("fill", d => d.color = color(d.group))
           .attr('opacity', d => d.opacity)
@@ -406,7 +406,7 @@
           .attr("fill", "#FFFAFA")
           .attr("font-size", 8)
           .attr('text-anchor', 'start') // 不要使用middle 不然会由于字体太大使得无法接触到click
-          .attr("opacity", 1)
+          .attr("opacity", d => d.opacity)
           .attr('dy', '0.5em')
           .attr("visibility", "hidden")
           .attr("font-family", "sans-serif")
