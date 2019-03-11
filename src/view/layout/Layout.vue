@@ -88,6 +88,7 @@
                       v-if="subMapData.length"
     ></subgraph-heatmap>
     <transition
+      name="fade"
       enter-active-class="animated bounceInDown"
       leave-active-class="animated bounceOutUp"
     >
@@ -95,6 +96,7 @@
         <div class="Block">
           <span class="demonstration">radius</span>
           <el-slider
+            style="margin-top: 5px;"
             class="BlockRight"
             v-model="fishRadius"
             :max="300"
@@ -105,6 +107,7 @@
         <div class="Block">
           <span class="demonstration">distortion</span>
           <el-slider
+            style="margin-top: 5px;"
             class="BlockRight"
             v-model="fishDistortion"
             :step="1"
@@ -117,6 +120,7 @@
         <div class="Block">
           <span class="demonstration">fisheye</span>
           <el-switch
+            style="margin-top: 15px;"
             class="BlockRight"
             v-model="obj.fish"
             active-text="打开鱼眼"
@@ -238,6 +242,7 @@
           .style("opacity", 0)
           .call(self.zoom);
 
+        // zoom
         function zoomed() {
           svg_g.attr("transform", `translate(${d3.event.translate})scale(${d3.event.scale})`);
         }
@@ -822,8 +827,8 @@
       resetNode() {
         this.obj.circles
           .attr('r', 5)
-          .attr('stroke-width', (d) => d.strokeWidth)
-          .attr('opacity', (d) => d.opacity)
+          .attr('stroke-width', d => d.strokeWidth)
+          .attr('opacity', d => d.opacity)
       },
       operation(command) {
         (this.$parent.$children)[2].operation(command)
