@@ -49,7 +49,9 @@
         dataObj: {},
         nodeAll: false, //   标记是修改所有的节点还是选中的节点 默认是修改选中的节点
         linkAll: false,
-        folder: {}
+        folder: {},
+        folderNode: {},
+        folderLink: {}
       }
     },
     computed: {
@@ -206,12 +208,12 @@
         this.folder.add(options, '节点b').listen();
 
 
-        let f1 = gui.addFolder('节点样式');
-        let node_all = f1.add(options, '修改所有节点').listen();
-        let node_stroke = f1.addColor(options, '节点边线').listen()
-        let node_size = f1.add(options, '节点尺寸').min(2).max(10).step(0.1).listen()
-        let node_color = f1.addColor(options, '节点填充').listen()
-        let node_opacity = f1.add(options, '节点透明度').min(0).max(1).step(0.05).listen()
+        this.folderNode.f1 = gui.addFolder('节点样式');
+        let node_all = this.folderNode.f1.add(options, '修改所有节点').listen();
+        let node_stroke = this.folderNode.f1.addColor(options, '节点边线').listen()
+        let node_size = this.folderNode.f1.add(options, '节点尺寸').min(2).max(10).step(0.1).listen()
+        let node_color = this.folderNode.f1.addColor(options, '节点填充').listen()
+        let node_opacity = this.folderNode.f1.add(options, '节点透明度').min(0).max(1).step(0.05).listen()
 
         /*节点信息监听*/
         node_all.onFinishChange((value) => {
@@ -231,12 +233,12 @@
         });
 
 
-        let f2 = gui.addFolder('边样式');
-        let edge_all = f2.add(options, '修改所有边').listen()
-        let edge_width = f2.add(options, '边宽度').min(1).max(4).step(0.1).listen()
-        let edge_color = f2.addColor(options, '边填充').listen()
-        let edge_opacity = f2.add(options, '边透明度').min(0).max(1).step(0.05).listen()
-        let edge_id = f2.add(options, '边编号').listen()
+        this.folderLink.f1 = gui.addFolder('边样式');
+        let edge_all = this.folderLink.f1.add(options, '修改所有边').listen()
+        let edge_width = this.folderLink.f1.add(options, '边宽度').min(1).max(4).step(0.1).listen()
+        let edge_color = this.folderLink.f1.addColor(options, '边填充').listen()
+        let edge_opacity = this.folderLink.f1.add(options, '边透明度').min(0).max(1).step(0.05).listen()
+        let edge_id = this.folderLink.f1.add(options, '边编号').listen()
         /*禁止用户更改*/
         edge_id.__input.disabled = true;
         /*边信息监听*/
@@ -799,7 +801,6 @@
         brush_g.call(now_brush).selectAll("rect").attr("height", () => {
           return this.padding_height
         });
-
       },
       updated(item) { // 更新节点的信息
         this.options['节点编号'] = item.id;
@@ -816,7 +817,6 @@
         this.options['节点边线'] = item.stroke;
         this.options['节点填充'] = item.color;
         this.options['节点透明度'] = +item.opacity;
-
       },
       updateNodea(item) {
         this.folder.open();
@@ -825,6 +825,18 @@
       updateNodeb(item) {
         this.folder.open();
         this.options['节点b'] = item;
+      },
+      folderNodeOpen() {
+        this.folderNode.f1.open();
+      },
+      folderNodeClose() {
+        this.folderNode.f1.close();
+      },
+      folderLinkOpen(){
+        this.folderLink.f1.open();
+      },
+      folderLinkClose(){
+        this.folderLink.f1.close();
       },
       restore() { // 根据刷新的结果 更新
         if (this.item_list.degree.brush.empty()

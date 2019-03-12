@@ -35,19 +35,22 @@
                  @click="changeMethod"
                  class="iconfont icon-change"
                  size="small"
-                 title="变换基本方法"
+                 :title="title1"
       ></el-button>
       <el-button type="info"
                  @click="changeDrag"
                  class="iconfont icon-import_drag"
                  size="small"
-                 title="拖拽"
+                 :title="title2"
+                 ref="changeDrag"
+                 :class="{ active: isActive2 }"
       ></el-button>
       <el-button type="info"
                  @click="shortPath"
                  class="iconfont icon-path"
                  size="small"
-                 title="最短路径"
+                 :title="title3"
+                 :class="{ active: isActive3 }"
       ></el-button>
       <el-button type="info"
                  size="small"
@@ -69,6 +72,7 @@
       <el-button type="info"
                  size="small"
                  title="子图构建"
+                 class="closeBtn"
       >
         <el-dropdown size="mini"
                      @command="buildgraph"
@@ -133,14 +137,14 @@
 </template>
 
 <script>
-  import axios from 'axios'
-  import qs from 'qs'
-  import {flatten} from '@/util/utils'
-  import matrix from './matrix'
-  import subgraphHeatmap from './subgraphHeatmap'
-  import {getNodeLinkData, isempty} from '@/util/index' // 子图的方法 导入可以共同使用
-  import subgraph from './subGraph' // 子图组件
-  import animate from 'animate.css'
+  import axios from 'axios';
+  import qs from 'qs';
+  import {flatten} from '@/util/utils';
+  import matrix from './matrix';
+  import subgraphHeatmap from './subgraphHeatmap';
+  import {getNodeLinkData, isempty} from '@/util/index'; // 子图的方法 导入可以共同使用
+  import subgraph from './subGraph'; // 子图组件
+  import animate from 'animate.css';
 
   export default {
     name: "Layout",
@@ -150,14 +154,14 @@
     },
     data() {
       return {
-        obj: {"fish": false, "drag": false, "state": "rect_contain", "shortPath": 'true', 'build': false}, // 对象里面保存的是图的信息
+        obj: {"fish": false, "state": "rect_contain", 'build': false}, // 对象里面保存的是图的信息
         nodes: [],
         links: [],
         brushLink: [],
         shortNode: [],
         neribor: {},
         neiborFlag: false,
-        shortPathList: '',
+        shortPathList: {},
         subGraph: [],
         subIndex: 0,
         curNodeId: '',
@@ -169,7 +173,12 @@
         fishRadius: 200,
         fishDistortion: 2,
         isShow: false,
-        showSubgraph: false
+        showSubgraph: false,
+        isActive2: false,
+        isActive3: false,
+        title1: '框选',
+        title2: '禁止节点拖拽',
+        title3: '开始最短路径查找',
       }
     },
     mounted() {
@@ -226,9 +235,9 @@
           .attr('width', width)
           .attr('height', height)
 
+
         // 动态添加属性 鱼眼
         this.obj.mainsvg = svg
-
 
         let color = d3.scale.category20c()
         self.zoom = d3.behavior.zoom()
@@ -250,7 +259,8 @@
         // 把所有的圆和线都放到一个g元素中
         let svg_g = d3.select('svg')
           .append('g')
-          .attr("class", "g_cirLink")
+          .attr("class", "g_cirLink");
+
 
         let lines = svg_g.selectAll(".forceLine")
           .data(this.links)
@@ -267,6 +277,13 @@
             // 更新control选中的边
             self.linkHight(d.id);
             self.curLinkId = d.id;
+            self.$parent.$children.forEach(item => {
+              if (item.$options.name === 'control') {
+                item.folderLinkOpen();
+                item.folderNodeClose();
+                return;
+              }
+            })
           })
           .on('mouseover', function (d) {
             d3.select(this)
@@ -299,8 +316,7 @@
             d3.select("#node_" + d.target.id + " text").attr("visibility", "hidden");
 
           })
-          .on("dblclick", (d) => {
-          })
+          .on("dblclick", d => {})
           .on('contextmenu', function (d) {
             d3.event.preventDefault();
             // self.getNeribor2tab(d)
@@ -338,8 +354,8 @@
           .attr('stroke', d => d.stroke)
           .attr("fill", d => d.color = color(d.group))
           .attr('opacity', d => d.opacity)
-          .on("dblclick", d => { // 双击和单击会同时触发
-          })
+          .on("dblclick", d => {
+          }) // 双击和单击会同时触发
           .on('click', function (d) {
             // 更新控制面板control中  节点的静态信息
             self.$parent.$children[0].updated(d);
@@ -348,6 +364,14 @@
             // 更新选中节点
             self.nodeHight(d3.select(document.getElementById(d.id)));
             self.curNodeId = d.id;
+
+            self.$parent.$children.forEach(item => {
+              if (item.$options.name === 'control') {
+                item.folderNodeOpen();
+                item.folderLinkClose();
+                return;
+              }
+            })
           })
           .on('mouseover', function (d) {
             // 按下shift按键后获取邻居节点
@@ -356,6 +380,7 @@
             } else { //
               self.nodeOver(d3.select(document.getElementById(d.id)));
             }
+            console.log(d3.event);
           })
           .on('mouseout', function (d) {
             if (d.id == self.curNodeId) {
@@ -625,45 +650,69 @@
         }
       },
       changeMethod() {
-        if (this.obj.state == 'rect_contain') {
-          this.obj.state = 'rect_lasso'
+        if (this.obj.state == 'rect_contain') { // 平移
+          this.title1 = '平移';
+          this.obj.state = 'rect_lasso';
           d3.select(".rect_contain")
             .attr("fill", "none")
-            .attr("opacity", "initial")
+            .attr("opacity", "initial");
           d3.select(".rect_lasso")
             .attr("opacity", "0")
-            .attr("fill", "initial")
-        } else {
-          this.obj.state = "rect_contain"
+            .attr("fill", "initial");
+        } else { // 框选
+          this.title1 = '框选';
+          this.obj.state = "rect_contain";
           d3.select(".rect_lasso")
             .attr("fill", "none")
-            .attr("opacity", "initial")
+            .attr("opacity", "initial");
           d3.select(".rect_contain")
             .attr("opacity", "0")
-            .attr("fill", "initial")
+            .attr("fill", "initial");
         }
       },
       changeDrag() {
-        if (this.obj.drag) {
-          this.obj.drag = !this.obj.drag
+        this.isActive2 = !this.isActive2;
+        if (this.isActive2) { // 禁用drag
           // 禁用drag
           //   下面两种写法都一样
           //   selection.on("mousedown.drag", null).on("touchstart.drag", null);
           //   selection.on(".drag", null).on(".drag", null);
+          this.title2 = '启用节点拖拽';
           this.obj.circles.on(".drag", null);
-        } else {
-          this.obj.drag = !this.obj.drag
+        } else { // 启用drag
+          this.title2 = '禁止节点拖拽';
           this.obj.circles.call(this.obj.force.drag);
         }
       },
       shortPath() { // 最短路径
-        if (this.obj.shortPath) { // 开启最短路径
-          this.obj.shortPath = !this.obj.shortPath
+        let self = this;
+        if (this.shortNode.filter(item => item).length < 2) {
+          this.$message({
+            message: `<strong>选择源节点和目标节点</strong>`,
+            type: 'warning',
+            center: true,
+            dangerouslyUseHTMLString: true
+          });
+          this.isActive3 = false;
+          return;
+        }
+        this.isActive3 = !this.isActive3;
+        if (this.isActive3) { // 开启最短路径
+          this.title3 = '清空最短路径查找';
           axios.get('/get/shortpath', {
             params: {
               path: JSON.stringify([this.shortNode[1], this.shortNode[0]])
             }
           }).then((response) => {
+            if (JSON.stringify(response.data) === '{}') {
+              this.$message({
+                message: `<strong>最短路径 &nbsp;&nbsp; (${self.shortNode[1]},${self.shortNode[0]})&nbsp;&nbsp;求取出错</strong>`,
+                type: 'warning',
+                center: true,
+                dangerouslyUseHTMLString: true
+              });
+              return;
+            }
             this.shortPathList = response;
             response.data['node'].forEach((item) => {
               d3.select(document.getElementById(item))
@@ -688,7 +737,10 @@
             })
           })
         } else { //  关闭最短路径
-          this.obj.shortPath = !this.obj.shortPath;
+          if (JSON.stringify(this.shortPathList) === '{}') {
+            return;
+          }
+          this.title3 = '开始最短路径查找';
           this.shortPathList.data['node'].forEach((item) => {
             d3.select(document.getElementById(item))
               .transition() // 启动过渡效果
