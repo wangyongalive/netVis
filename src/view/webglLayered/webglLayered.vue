@@ -44,11 +44,11 @@
         this.renderer.setClearColor(new THREE.Color(0x303030));
         this.renderer.setSize(width, height);
 
-        // var axes = new THREE.AxisHelper(200);               //创建三轴表示
-        // this.scene.add(axes);
+        let axes = new THREE.AxisHelper(200);               //创建三轴表示
+        this.scene.add(axes);
 
         // 要指定document 不然会将其应用到整个body
-        let controls = new TrackballControls(this.camera,this.$refs.WebGL);
+        let controls = new TrackballControls(this.camera, this.$refs.WebGL);
         controls.rotateSpeed = 2.5;
         controls.zoomSpeed = 1.2;
         controls.panSpeed = 0.8;
@@ -67,7 +67,7 @@
           node.circle.data = node; // 数据绑定
           self.scene.add(node.circle)
           dragObjects.push(node.circle);
-          node.circle.position.set(node.x / 10, node.y / 10, node.level * 10);
+          node.circle.position.set(node.x / 10 , node.y / 10 , node.level * 10);
           nodeLevels.add(node.level);
         })
         // 边

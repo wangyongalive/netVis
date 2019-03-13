@@ -85,6 +85,15 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-button>
+      <el-button
+        type="info"
+        size="small"
+        title="上传"
+        class="iconfont icon-shangchuan"
+        @click.native="test"
+      >
+
+      </el-button>
     </el-button-group>
     <subgraph v-if="showSubgraph"></subgraph>
     <!--异步获取数据，直接获取数据为空-->
@@ -133,6 +142,17 @@
         </div>
       </div>
     </transition>
+    <el-upload
+      class="upload-demo uploadPosition"
+      drag
+      :before-upload="beforeUpload"
+      action="/get/test"
+      ref="upload"
+    >
+      <i class="el-icon-upload"></i>
+      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+      <div class="el-upload__tip" slot="tip">只能上传json文件，且不超过3M</div>
+    </el-upload>
   </div>
 </template>
 
@@ -179,6 +199,8 @@
         title1: '框选',
         title2: '禁止节点拖拽',
         title3: '开始最短路径查找',
+        arrxMaxMin: {},
+        arryMaxMin: {}
       }
     },
     mounted() {
@@ -316,7 +338,8 @@
             d3.select("#node_" + d.target.id + " text").attr("visibility", "hidden");
 
           })
-          .on("dblclick", d => {})
+          .on("dblclick", d => {
+          })
           .on('contextmenu', function (d) {
             d3.event.preventDefault();
             // self.getNeribor2tab(d)
@@ -372,6 +395,7 @@
                 return;
               }
             })
+
           })
           .on('mouseover', function (d) {
             // 按下shift按键后获取邻居节点
@@ -380,7 +404,10 @@
             } else { //
               self.nodeOver(d3.select(document.getElementById(d.id)));
             }
-            console.log(d3.event);
+            let dx = (d.x - self.arrxMaxMin.min) / self.arrxMaxMin.range;
+            let dy = (d.y - self.arryMaxMin.min) / self.arryMaxMin.range;
+            console.log(dx);
+            console.log(dy);
           })
           .on('mouseout', function (d) {
             if (d.id == self.curNodeId) {
@@ -456,7 +483,7 @@
         circles.append("title")
           .text(d => `${d.id}`)
 
-
+        let isflagHeatMapUp = true;
         // tick事件的监听器
         force.on("tick", () => {
           // if (force.alpha() <= 0.01) {  // 足够稳定时，才渲染一次
@@ -477,8 +504,17 @@
           lables.attr('y', d => d.y)
           // }
 
-          if (force.alpha() <= 0.01) {
-            self.subMapData = self.nodes
+          if (force.alpha() <= 0.01 && isflagHeatMapUp) {
+            self.subMapData = self.nodes;
+            isflagHeatMapUp = false; // 使用一个标记标识已经识别过的节点
+            let arrx = self.nodes.map((item) => item.x);
+            let arry = self.nodes.map((item) => item.y);
+            self.arrxMaxMin.min = Math.min(...arrx);
+            self.arrxMaxMin.max = Math.max(...arrx);
+            self.arrxMaxMin.range = self.arrxMaxMin.max - self.arrxMaxMin.min;
+            self.arryMaxMin.min = Math.min(...arry);
+            self.arryMaxMin.max = Math.max(...arry);
+            self.arryMaxMin.range = self.arryMaxMin.max - self.arryMaxMin.min;
           }
           // force.stop(); // 渲染完成后立即停止刷新
           // }
@@ -486,16 +522,16 @@
 
 
         // 添加动态属性
-        this.obj.lines = lines
-        this.obj.circles = circles
-        this.obj.lables = lables
+        this.obj.lines = lines;
+        this.obj.circles = circles;
+        this.obj.lables = lables;
 
         // 索套
         // Lasso
         // Lasso functions to execute while lassoing
         let lasso_start = function () {
           lasso.items()
-            .classed({"not_possible": true, "selected": false}) // style as not possible
+            .classed({"not_possible": true, "selected": false}); // style as not possible
         };
         let lasso_draw = function () {
           // Style the possible dots
@@ -1032,10 +1068,25 @@
         this.isShow = true;
       },
       fishOut() {
-        this.isShow = false;
+        // this.isShow = false;
+      },
+      beforeUpload(file) {
+        const isJSON = file.type === 'application/json';
+        const isLt3M = file.size / 1024 / 1024 < 2;
+        if (!isJSON) {
+          this.$message.error('上传文件只能是json格式!');
+        }
+        if (!isLt3M) {
+          this.$message.error('上传文件大小不能超过 3MB!');
+        }
+        return isJSON && isLt3M;
       },
       test() {
-        console.log('233');
+        this.$refs.upload.style.top = window.innerWidth * 0.5 + 'px';
+        this.$refs.upload.style.left = window.innerHeight * 0.5 + 'px';
+      },
+      findMaxMinXY() {
+
       }
     },
     // 声明一个本地的过滤器

@@ -164,17 +164,8 @@
           let currentY = ev.offsetY;
           let positionX = ((currentX - width) / width) * currentGWidth;
           let positionY = ((currentY - height) / height) * currentGHeight;
-          if (self.$store.state.translate) {
-            self.$store.dispatch('changeScaleTrans', {
-              scale: 1,
-              translate: [-positionX, -positionY]
-            })
-            d3.select('.g_cirLink').attr("transform", `translate(${self.$store.state.translate})scale(1)`);
-            self.$parent.zoom.translate(`${self.$store.state.translate}`);
-          } else {
-            d3.select('.g_cirLink').attr("transform", `translate(${-positionX},${-positionY})scale(1)`);
-            self.$parent.zoom.translate([-positionX, -positionY]);
-          }
+          d3.select('.g_cirLink').attr("transform", `translate(${-positionX},${-positionY})scale(1)`);
+          self.$parent.zoom.translate([-positionX, -positionY]);
         };
         /* 提示框结束*/
       },
