@@ -97,8 +97,12 @@
     </el-button-group>
     <subgraph v-if="showSubgraph"></subgraph>
     <!--异步获取数据，直接获取数据为空-->
-    <subgraph-heatmap :width="250|toPx" :height="250|toPx" :datas="subMapData"
-                      v-if="subMapData.length"
+    <subgraph-heatmap
+      :width="250|toPx"
+      :height="250|toPx"
+      :datas="subMapData"
+      v-if="subMapData.length"
+
     ></subgraph-heatmap>
     <transition
       name="fade"
@@ -410,8 +414,15 @@
             }
             let dx = (d.x - self.arrxMaxMin.min) / self.arrxMaxMin.range;
             let dy = (d.y - self.arryMaxMin.min) / self.arryMaxMin.range;
-            console.log(dx);
-            console.log(dy);
+
+            for (let item of self.$children) {
+              // 调用组件subgraphHeatmap里面的方法
+              if (item.$options.name === 'subgraphHeatmap') {
+                item.redraw(dx * 250, dy * 250, 10)
+                break;
+              }
+            }
+
           })
           .on('mouseout', function (d) {
             if (d.id == self.curNodeId) {
@@ -1072,7 +1083,7 @@
         this.isShow = true;
       },
       fishOut() {
-        // this.isShow = false;
+        this.isShow = false;
       },
       beforeUpload(file) {
         const isJSON = file.type === 'application/json';

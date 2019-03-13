@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="heatmapContain">
     <div class="legend-area">
       <span id="min"></span>
       <span id="max"></span>
@@ -173,8 +173,7 @@
         this.Ctx.beginPath();
         this.Ctx.arc(x, y, radius, 0, 2 * Math.PI);
         this.Ctx.stroke();
-      }
-      ,
+      },
       redraw(x, y, radius) {
         this.Ctx.clearRect(0, 0, parseInt(this.width), parseInt(this.height));
         let data = {
