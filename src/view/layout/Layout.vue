@@ -1,5 +1,5 @@
 <template>
-  <div id="layout" style="height: 100%; width: 100%;" refs="layout">
+  <div id="layout" style="height: 100%; width: 100%;" ref="layout">
     <el-button-group>
       <el-button type="info"
                  size="small"
@@ -90,7 +90,7 @@
         size="small"
         title="上传"
         class="iconfont icon-shangchuan"
-        @click.native="test"
+        @click.native="showUpload"
       >
 
       </el-button>
@@ -148,10 +148,12 @@
       :before-upload="beforeUpload"
       action="/get/test"
       ref="upload"
+      v-show="isActive4"
     >
       <i class="el-icon-upload"></i>
       <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-      <div class="el-upload__tip" slot="tip">只能上传json文件，且不超过3M</div>
+      <div class="el-upload__tip" slot="tip" style="color: #f3f3f3">只能上传json文件，且不超过3M</div>
+      <el-button size="small" style="margin-top: 10px" type="info" @click.native.stop="cancelUpload">取消上传</el-button>
     </el-upload>
   </div>
 </template>
@@ -196,6 +198,7 @@
         showSubgraph: false,
         isActive2: false,
         isActive3: false,
+        isActive4: false,
         title1: '框选',
         title2: '禁止节点拖拽',
         title3: '开始最短路径查找',
@@ -227,6 +230,7 @@
         this.resetNode();
         index.forEach((item) => this.selectNode(item))
       })
+
     },
     methods: {
       renderChart() { // 绘制力导向图
@@ -1072,7 +1076,7 @@
       },
       beforeUpload(file) {
         const isJSON = file.type === 'application/json';
-        const isLt3M = file.size / 1024 / 1024 < 2;
+        const isLt3M = file.size / 1024 / 1024 < 3;
         if (!isJSON) {
           this.$message.error('上传文件只能是json格式!');
         }
@@ -1081,9 +1085,16 @@
         }
         return isJSON && isLt3M;
       },
+      showUpload() {
+        this.isActive4 = true; // 上传提示框显示
+        document.getElementById('over').style.display = 'block'; // 显示悬浮层
+      },
+      cancelUpload() {
+        this.isActive4 = false; // 上传提示框隐藏
+        document.getElementById('over').style.display = 'none'; // 隐藏悬浮窗
+      },
       test() {
-        this.$refs.upload.style.top = window.innerWidth * 0.5 + 'px';
-        this.$refs.upload.style.left = window.innerHeight * 0.5 + 'px';
+
       },
       findMaxMinXY() {
 
