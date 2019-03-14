@@ -44,8 +44,8 @@
         this.renderer.setClearColor(new THREE.Color(0x303030));
         this.renderer.setSize(width, height);
 
-        let axes = new THREE.AxisHelper(200);               //创建三轴表示
-        this.scene.add(axes);
+        // let axes = new THREE.AxisHelper(200);               //创建三轴表示
+        // this.scene.add(axes);
 
         // 要指定document 不然会将其应用到整个body
         let controls = new TrackballControls(this.camera, this.$refs.WebGL);
@@ -60,6 +60,19 @@
         let dragObjects = [];
         let nodeLevels = new Set();
         // 节点
+        let arrx = data.map((item) => item.x);
+        let arry = data.map((item) => item.y);
+        let arrxMin = Math.min(...arrx);
+        let arrxMax = Math.max(...arrx);
+        let arrxRangex = (arrxMax + arrxMin) / 20;
+        let arryMiny = Math.min(...arry);
+        let arryMaxy = Math.max(...arry);
+        let arrxRangey = (arryMaxy + arryMiny) / 20;
+        let levels = new Set(data.map(item => +item.level));
+        let levelMax = Math.max(...Array.from(levels));
+        let levelMin = Math.min(...Array.from(levels));
+        let levelRange = (levelMax - levelMin) / 2;
+
         data.forEach(node => {
           node.geometry = new THREE.SphereGeometry(1, 10, 10);
           node.material = new THREE.MeshBasicMaterial({color: colour(node.level)});
@@ -67,17 +80,17 @@
           node.circle.data = node; // 数据绑定
           self.scene.add(node.circle)
           dragObjects.push(node.circle);
-          node.circle.position.set(node.x / 10 , node.y / 10 , node.level * 10);
+          node.circle.position.set(node.x / 10 - arrxRangex, node.y / 10 - arrxRangey, node.level * 10 - levelRange * 10);
           nodeLevels.add(node.level);
-        })
+        });
         // 边
         link.forEach((link) => {
           link.material = new THREE.LineBasicMaterial({color: 0xAAAAAA})
           link.geometry = new THREE.Geometry()
           link.line = new THREE.Line(link.geometry, link.material)
           link.line.geometry.verticesNeedUpdate = true
-          link.line.geometry.vertices[0] = new THREE.Vector3(link.source.x / 10, link.source.y / 10, link.source.level * 10)
-          link.line.geometry.vertices[1] = new THREE.Vector3(link.target.x / 10, link.target.y / 10, link.target.level * 10)
+          link.line.geometry.vertices[0] = new THREE.Vector3(link.source.x / 10 - arrxRangex, link.source.y / 10 - arrxRangey, link.source.level * 10 - levelRange * 10)
+          link.line.geometry.vertices[1] = new THREE.Vector3(link.target.x / 10 - arrxRangex, link.target.y / 10 - arrxRangey, link.target.level * 10 - levelRange * 10)
           self.scene.add(link.line)
         })
 

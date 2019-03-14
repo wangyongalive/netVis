@@ -207,7 +207,8 @@
         title2: '禁止节点拖拽',
         title3: '开始最短路径查找',
         arrxMaxMin: {},
-        arryMaxMin: {}
+        arryMaxMin: {},
+        nowScale: 1
       }
     },
     mounted() {
@@ -284,6 +285,14 @@
         // zoom
         function zoomed() {
           svg_g.attr("transform", `translate(${d3.event.translate})scale(${d3.event.scale})`);
+          self.nowScale = d3.event.scale;
+          if (self.nowScale > 1) {
+            circles
+              .attr("r", d => d.size / self.nowScale)
+              .attr("stroke-width", d => d.strokeWidth / self.nowScale)
+            lines
+              .attr("stroke-width", d => d.weight / self.nowScale);
+          }
         }
 
         // 把所有的圆和线都放到一个g元素中
@@ -316,17 +325,18 @@
             })
           })
           .on('mouseover', function (d) {
+
             d3.select(this)
               .attr("stroke-width", d => d.weight * 2)
               .attr("stroke", "#b46fff");
             d3.select("#node_" + d.source.id + " circle")
               .attr('stroke', "#b46fff")
-              .attr('stroke-width', 3)
+              .attr('stroke-width', 3 / self.nowScale)
               .attr('opacity', 1);
             d3.select("#node_" + d.source.id + " text").attr("visibility", "visible");
             d3.select("#node_" + d.target.id + " circle")
               .attr('stroke', "#b46fff")
-              .attr('stroke-width', 3)
+              .attr('stroke-width', 3 / self.nowScale)
               .attr('opacity', 1);
             d3.select("#node_" + d.target.id + " text").attr("visibility", "visible");
           })
@@ -396,14 +406,13 @@
             self.nodeHight(d3.select(document.getElementById(d.id)));
             self.curNodeId = d.id;
 
-            self.$parent.$children.forEach(item => {
+            for (let item of self.$parent.$children) {
               if (item.$options.name === 'control') {
                 item.folderNodeOpen();
                 item.folderLinkClose();
-                return;
+                break;
               }
-            })
-
+            }
           })
           .on('mouseover', function (d) {
             // 按下shift按键后获取邻居节点
@@ -888,16 +897,17 @@
         this.showSubgraph = true;
         // 使用了v-if 要将事件放在$nextTick中才会立即执行
         this.$nextTick(() => {
-          this.$children.forEach(item => {
+          for (let item of this.$children) {
             // 调用组件subGraph里面的方法
             if (item.$options.name === 'subGraph') {
               item.buildgraph(command);
-              return;
+              break;
             }
-          })
+          }
         });
       },
       getNeribor2tab(d) {
+        let self = this;
         axios.get('/get/neibor', {
           params: {
             ID: d.id
@@ -908,7 +918,7 @@
             // d3 直接选取数字id会报错
             d3.select(document.getElementById(item))
               .attr('stroke', '#ffd24c')
-              .attr('stroke-width', 2)
+              .attr('stroke-width', 2 / self.nowScale)
               .attr('opacity', 1)
           })
           let result = this.neribor.nodeId.map((item) => {
@@ -922,15 +932,17 @@
           })
       },
       selectNode(item) {
+        let self = this;
         d3.select(document.getElementById(item))
-          .attr('r', 8)
+          .attr('r', 8 / self.nowScale)
           .attr('stroke', "#eee")
-          .attr('stroke-width', 2)
+          .attr('stroke-width', 2 / self.nowScale)
           .attr('opacity', 1)
       },
       resetNode() {
+        let self = this;
         this.obj.circles
-          .attr('r', 5)
+          .attr('r', 5 / self.nowScale)
           .attr('stroke-width', d => d.strokeWidth)
           .attr('opacity', d => d.opacity)
       },
@@ -941,21 +953,24 @@
         this.nodeHight(d3.select(document.getElementById(item)))
       },
       linkHight(item) {
+        let self = this;
         d3.select('#link_' + item)
           .attr('stroke', '#fff')
-          .attr('stroke-width', 2)
+          .attr('stroke-width', 2 / self.nowScale)
           .attr('stroke-opacity', 1)
       },
       nodeHight(item) {
+        let self = this;
         item
           .attr('stroke', "#fff")
-          .attr('stroke-width', 3)
+          .attr('stroke-width', 3 / self.nowScale)
           .attr('opacity', 1)
       },
       nodeOver(item) { // 鼠标悬浮时候的样式
+        let self = this;
         item
           .attr('stroke', "#b46fff")
-          .attr('stroke-width', 3)
+          .attr('stroke-width', 3 / self.nowScale)
           .attr('opacity', 0.8)
       },
       nodeOut(item) { // 鼠标离开时候的样式
@@ -965,9 +980,10 @@
           .attr('opacity', d => d.opacity)
       },
       selectInitLink(item) {
+        let self = this;
         d3.select('#link_' + item)
           .attr('stroke', "#fff")
-          .attr('stroke-width', 3)
+          .attr('stroke-width', 3 / self.nowScale)
           .attr('stroke-opacity', 1)
       },
       setLabelType(value) {
