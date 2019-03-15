@@ -95,12 +95,12 @@
         })
 
         Array.from(nodeLevels).forEach((level) => {
-          let planeGeometry = new THREE.PlaneGeometry(90, 90, 10, 10);
+          let planeGeometry = new THREE.PlaneGeometry((arrxMax - arrxMin)/10, (arryMaxy - arryMiny)/10, 10, 10);
           let planeMaterial = new THREE.MeshBasicMaterial({color: colour(level)});
           let plane = new THREE.Mesh(planeGeometry, planeMaterial);
-          plane.position.x = 45;
-          plane.position.y = 45;
-          plane.position.z = level * 10;
+          plane.position.x = 0;
+          plane.position.y = 0;
+          plane.position.z = level * 10 - levelRange * 10;
           plane.visible = false;
           plane.data = level;
           plane.name = `level_${plane.position.z}`;
