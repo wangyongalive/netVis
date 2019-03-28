@@ -325,7 +325,6 @@
             })
           })
           .on('mouseover', function (d) {
-
             d3.select(this)
               .attr("stroke-width", d => d.weight * 2)
               .attr("stroke", "#b46fff");
@@ -416,9 +415,10 @@
           })
           .on('mouseover', function (d) {
             // 按下shift按键后获取邻居节点
+            self.showLable(d.id); // 显示标签
             if (d3.event.shiftKey) {
               self.getNeribor2tab(d);
-            } else { //
+            } else {
               self.nodeOver(d3.select(document.getElementById(d.id)));
             }
             let dx = (d.x - self.arrxMaxMin.min) / self.arrxMaxMin.range;
@@ -431,9 +431,9 @@
                 break;
               }
             }
-
           })
           .on('mouseout', function (d) {
+            self.hiddenLable(d.id); // 隐藏标签
             if (d.id == self.curNodeId) {
               self.nodeHight(d3.select(document.getElementById(d.id)));
             } else {
@@ -442,6 +442,7 @@
             if (JSON.stringify(self.neribor) !== '{}' && self.neriborFlag) {
               self.neribor.nodeId.forEach(item => {
                 self.nodeOut(d3.select(document.getElementById(item)));
+                self.hiddenLable(item); // 隐藏标签
               })
               self.neriborFlag = false; // 标记  邻居节点没有更新就不执行
             }
@@ -501,11 +502,6 @@
             // 拖拽中对象变为黄色
             d3.select(this).attr("fill", "yellow");
           });
-
-        // 这个由两个作用 一个是当鼠标悬浮的时候 显示标题
-        // 另外一个是筛选的时候可以选出数据
-        circles.append("title")
-          .text(d => `${d.id}`)
 
         let isflagHeatMapUp = true;
         // tick事件的监听器
@@ -913,19 +909,20 @@
             ID: d.id
           }
         }).then((response) => {
-          this.neribor = response.data
+          this.neribor = response.data;
           response.data.nodeId.forEach((item) => {
             // d3 直接选取数字id会报错
             d3.select(document.getElementById(item))
               .attr('stroke', '#ffd24c')
               .attr('stroke-width', 2 / self.nowScale)
-              .attr('opacity', 1)
+              .attr('opacity', 1);
+              self.showLable(item); // 显示标签
           })
           let result = this.neribor.nodeId.map((item) => {
             return this.dataObj[+item]
           })
           this.neriborFlag = true;
-          PubSub.publish('find', result); //
+          PubSub.publish('find', result);
         })
           .catch(function (error) {
             console.log(error)
@@ -971,7 +968,7 @@
         item
           .attr('stroke', "#b46fff")
           .attr('stroke-width', 3 / self.nowScale)
-          .attr('opacity', 0.8)
+          .attr('opacity', 0.8);
       },
       nodeOut(item) { // 鼠标离开时候的样式
         item
@@ -1123,8 +1120,11 @@
       test() {
 
       },
-      findMaxMinXY() {
-
+      showLable(id) {
+        d3.select('#node_' + id + ' text').attr('visibility', 'visible');
+      },
+      hiddenLable(id) {
+        d3.select('#node_' + id + ' text').attr('visibility', 'hidden');
       }
     },
     // 声明一个本地的过滤器
